@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'rol', 'cargo', 'fecha_ingreso', 'activo', 'debe_cambiar_password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -27,6 +27,28 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'activo' => 'boolean',
+            'debe_cambiar_password' => 'boolean',
+            'fecha_ingreso' => 'date',
         ];
+    }
+    public function esAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    public function areas()
+    {
+        return $this->belongsToMany(Area::class);
+    }
+
+    public function lecciones()
+    {
+        return $this->belongsToMany(Leccion::class)->withPivot('completada_en');
+    }
+
+    public function modulosAprobados()
+    {
+        return $this->hasMany(ModuloAprobado::class);
     }
 }
