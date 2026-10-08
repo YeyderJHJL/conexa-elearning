@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
 #[Fillable(['name', 'email', 'password', 'rol', 'cargo', 'fecha_ingreso', 'activo', 'debe_cambiar_password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -50,5 +52,10 @@ class User extends Authenticatable
     public function modulosAprobados()
     {
         return $this->hasMany(ModuloAprobado::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->esAdmin();
     }
 }
