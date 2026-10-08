@@ -15,8 +15,9 @@ class OpcionsTable
     {
         return $table
             ->columns([
-                TextColumn::make('pregunta_id')
-                    ->numeric()
+                TextColumn::make('pregunta.titulo')
+                    ->label('Pregunta')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('texto')
                     ->searchable(),

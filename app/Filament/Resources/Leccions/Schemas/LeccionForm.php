@@ -19,9 +19,10 @@ class LeccionForm
                     ->required(),
                 TextInput::make('titulo')
                     ->required(),
-                TextInput::make('tipo')
-                    ->required()
-                    ->default('texto'),
+                Select::make('tipo')
+                    ->options(['texto' => 'Texto', 'video' => 'Video', 'pdf' => 'PDF'])
+                    ->default('texto')
+                    ->required(),
                 Textarea::make('contenido')
                     ->columnSpanFull(),
                 TextInput::make('url_recurso'),
