@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ProgresoService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     /**
-     * Pantalla de inicio del trabajador: sus áreas asignadas.
+     * Pantalla de inicio del trabajador: sus áreas asignadas y su avance.
      */
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request, ProgresoService $progreso): View
     {
         $areas = $request->user()
             ->areas()
@@ -19,6 +20,12 @@ class DashboardController extends Controller
             ->orderBy('orden')
             ->get();
 
-        return view('dashboard', ['areas' => $areas]);
+        $resumen = $progreso->resumen($request->user(), $areas);
+
+        return view('dashboard', [
+            'areas' => $areas,
+            'progresoAreas' => $resumen['areas'],
+            'progresoGlobal' => $resumen['global'],
+        ]);
     }
 }

@@ -29,7 +29,11 @@
             @else
                 <ol class="mt-6 space-y-3 sm:space-y-4">
                     @foreach ($modulos as $modulo)
-                        @php $bloqueado = $modulo->estado === 'bloqueado'; @endphp
+                        @php
+                            $porcentaje = $progresoModulos[$modulo->id] ?? 0;
+                            $completo = $porcentaje >= 100;
+                            $bloqueado = $modulo->estado === 'bloqueado' && ! $completo;
+                        @endphp
                         <li>
                         <a href="{{ route('modulos.show', $modulo) }}" class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 {{ $bloqueado ? 'opacity-70' : '' }}">
                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold {{ $bloqueado ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-600' }}">
@@ -40,7 +44,11 @@
                                 <div class="flex flex-wrap items-center justify-between gap-2">
                                     <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug">{{ $modulo->titulo }}</h3>
 
-                                    @if ($bloqueado)
+                                    @if ($completo)
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                            <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Completado
+                                        </span>
+                                    @elseif ($bloqueado)
                                         <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
                                             <i class="bi bi-lock-fill" aria-hidden="true"></i> Bloqueado
                                         </span>
@@ -60,7 +68,12 @@
                                     {{ trans_choice(':count lección|:count lecciones', $modulo->lecciones_activas_count) }}
                                 </p>
 
-                                {{-- Aquí irá luego el progreso real del módulo. --}}
+                                <div class="mt-3 flex items-center gap-3">
+                                    <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $porcentaje }}" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="h-full rounded-full {{ $completo ? 'bg-emerald-500' : 'bg-blue-600' }}" style="width: {{ $porcentaje }}%"></div>
+                                    </div>
+                                    <span class="text-sm font-semibold {{ $completo ? 'text-emerald-600' : 'text-blue-600' }}">{{ $porcentaje }}%</span>
+                                </div>
                             </div>
                         </a>
                         </li>

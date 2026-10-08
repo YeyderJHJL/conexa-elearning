@@ -1,3 +1,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .contenido-rico {
+        @apply text-gray-800 leading-relaxed break-words;
+    }
+
+    .contenido-rico > * + * {
+        @apply mt-4;
+    }
+
+    .contenido-rico h1 {
+        @apply text-2xl font-bold text-gray-900;
+    }
+
+    .contenido-rico h2 {
+        @apply text-xl font-semibold text-gray-900;
+    }
+
+    .contenido-rico h3 {
+        @apply text-lg font-semibold text-gray-900;
+    }
+
+    .contenido-rico ul {
+        @apply list-disc pl-6;
+    }
+
+    .contenido-rico ol {
+        @apply list-decimal pl-6;
+    }
+
+    .contenido-rico a {
+        @apply text-blue-600 underline hover:text-blue-700;
+    }
+
+    .contenido-rico blockquote {
+        @apply border-l-4 border-blue-200 pl-4 italic text-gray-600;
+    }
+
+    .contenido-rico img {
+        @apply h-auto max-w-full rounded-xl;
+    }
+
+    .contenido-rico pre {
+        @apply overflow-x-auto rounded-xl bg-gray-900 p-4 text-sm text-gray-100;
+    }
+}
