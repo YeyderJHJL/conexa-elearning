@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Modulo;
+use App\Services\ProgresoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,7 +14,7 @@ class AreaController extends Controller
     /**
      * Detalle de un área: sus módulos activos con un estado provisional.
      */
-    public function show(Request $request, Area $area): View
+    public function show(Request $request, Area $area, ProgresoService $progreso): View
     {
         $this->authorize('view', $area);
 
@@ -27,6 +28,7 @@ class AreaController extends Controller
         return view('areas.show', [
             'area' => $area,
             'modulos' => $this->asignarEstados($modulos),
+            'progresoModulos' => $progreso->porModulos($request->user(), $area),
         ]);
     }
 
