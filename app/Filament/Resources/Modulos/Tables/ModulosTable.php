@@ -15,8 +15,9 @@ class ModulosTable
     {
         return $table
             ->columns([
-                TextColumn::make('area_id')
-                    ->numeric()
+                TextColumn::make('area.nombre')
+                    ->label('Área')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('titulo')
                     ->searchable(),
