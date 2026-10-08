@@ -30,7 +30,8 @@
                 <ol class="mt-6 space-y-3 sm:space-y-4">
                     @foreach ($modulos as $modulo)
                         @php $bloqueado = $modulo->estado === 'bloqueado'; @endphp
-                        <li class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 {{ $bloqueado ? 'opacity-70' : '' }}">
+                        <li>
+                        <a href="{{ route('modulos.show', $modulo) }}" class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 {{ $bloqueado ? 'opacity-70' : '' }}">
                             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold {{ $bloqueado ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-600' }}">
                                 {{ $loop->iteration }}
                             </span>
@@ -59,8 +60,9 @@
                                     {{ trans_choice(':count lección|:count lecciones', $modulo->lecciones_activas_count) }}
                                 </p>
 
-                                {{-- Aquí irán luego el progreso real y el enlace a las lecciones. --}}
+                                {{-- Aquí irá luego el progreso real del módulo. --}}
                             </div>
+                        </a>
                         </li>
                     @endforeach
                 </ol>
