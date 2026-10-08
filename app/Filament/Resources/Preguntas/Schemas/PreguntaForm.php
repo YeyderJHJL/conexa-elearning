@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Preguntas\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
 
 class PreguntaForm
 {
@@ -11,9 +12,9 @@ class PreguntaForm
     {
         return $schema
             ->components([
-                TextInput::make('quiz_id')
-                    ->required()
-                    ->numeric(),
+                Select::make('quiz_id')
+                    ->relationship('quiz', 'titulo')
+                    ->required(),
                 TextInput::make('enunciado')
                     ->required(),
                 TextInput::make('orden')

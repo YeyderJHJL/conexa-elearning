@@ -14,8 +14,9 @@ class PreguntasTable
     {
         return $table
             ->columns([
-                TextColumn::make('quiz_id')
-                    ->numeric()
+                TextColumn::make('quiz.titulo')
+                    ->label('Quiz')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('enunciado')
                     ->searchable(),
