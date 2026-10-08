@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Area;
+use App\Models\Leccion;
 use App\Models\Modulo;
 use App\Models\User;
 use Illuminate\Database\Query\Builder;
@@ -11,15 +12,21 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Cálculo del avance de un usuario (0-100) por módulo, área y global.
+ * Cálculo del avance de un usuario (0-100) por módulo, área y global, y de la secuencia de módulos.
  *
  * Reglas: solo cuentan módulos y lecciones activos; una lección completada que luego se
  * desactiva deja de contar; el contenido vacío (módulo sin lecciones activas, área sin
- * módulos con lecciones) no entra en los promedios; los porcentajes se redondean hacia
- * abajo para que 100 signifique realmente todo completado.
+ * módulos con lecciones) no entra en los promedios ni bloquea la secuencia; los porcentajes
+ * se redondean hacia abajo para que 100 signifique realmente todo completado.
  */
 class ProgresoService
 {
+    public const COMPLETADO = 'completado';
+
+    public const EN_CURSO = 'en_curso';
+
+    public const BLOQUEADO = 'bloqueado';
+
     /**
      * Avance de un módulo.
      */
@@ -28,6 +35,16 @@ class ProgresoService
         $fila = $this->consulta($user)->where('modulos.id', $modulo->id)->first();
 
         return $fila ? $this->entero($this->razon($fila) ?? 0.0) : 0;
+    }
+
+    /**
+     * Si el usuario vio todas las lecciones activas del módulo (un módulo sin lecciones cuenta como visto).
+     */
+    public function leccionesCompletadas(User $user, Modulo $modulo): bool
+    {
+        $fila = $this->consulta($user)->where('modulos.id', $modulo->id)->first();
+
+        return $fila !== null && $fila->completadas >= $fila->total;
     }
 
     /**
@@ -87,7 +104,100 @@ class ProgresoService
     }
 
     /**
-     * Total de lecciones activas y completadas por el usuario, por cada módulo activo.
+     * Estado de cada módulo activo de un área para el usuario, indexado por id de módulo:
+     * completado, en_curso o bloqueado.
+     *
+     * @return Collection<int, string>
+     */
+    public function estados(User $user, Area $area): Collection
+    {
+        return ($this->evaluar($user, [$area->id])->get($area->id) ?? collect())
+            ->mapWithKeys(fn (object $fila) => [(int) $fila->id => $fila->estado]);
+    }
+
+    /**
+     * Si el usuario puede entrar al módulo: el primero del área siempre, y los demás
+     * cuando el módulo anterior está completo.
+     */
+    public function moduloDesbloqueado(User $user, Modulo $modulo): bool
+    {
+        $fila = $this->evaluar($user, [$modulo->area_id])->get($modulo->area_id)?->firstWhere('id', $modulo->id);
+
+        return $fila !== null && $fila->estado !== self::BLOQUEADO;
+    }
+
+    /**
+     * Primera lección no completada del primer módulo disponible del usuario
+     * (recorriendo sus áreas en orden), o null si no le queda nada pendiente.
+     *
+     * @param  Collection<int, Area>|null  $areas  Áreas activas asignadas, ya ordenadas; si no, se consultan.
+     */
+    public function siguienteLeccion(User $user, ?Collection $areas = null): ?Leccion
+    {
+        $areas ??= $user->areas()->where('activa', true)->orderBy('orden')->orderBy('id')->get();
+        $porArea = $this->evaluar($user, $areas->pluck('id')->all());
+
+        foreach ($areas as $area) {
+            $modulo = $porArea->get($area->id)?->first(fn (object $fila) => $fila->estado === self::EN_CURSO && $fila->total > 0);
+
+            if ($modulo) {
+                return Leccion::query()
+                    ->with('modulo')
+                    ->where('modulo_id', $modulo->id)
+                    ->where('activa', true)
+                    ->whereNotIn('id', fn ($query) => $query->select('leccion_id')->from('leccion_user')->where('user_id', $user->id))
+                    ->orderBy('orden')
+                    ->orderBy('id')
+                    ->first();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Módulos activos de las áreas dadas, ordenados dentro de cada área, con su estado en la secuencia.
+     *
+     * @param  array<int, int>  $areaIds
+     * @return Collection<int, Collection<int, object>>
+     */
+    private function evaluar(User $user, array $areaIds): Collection
+    {
+        return $this->consulta($user)
+            ->whereIn('modulos.area_id', $areaIds)
+            ->get()
+            ->groupBy('area_id')
+            ->map(function (Collection $filas) {
+                $anteriorPasable = true;
+
+                return $filas->map(function (object $fila) use (&$anteriorPasable) {
+                    $completo = $this->moduloCompleto($fila);
+
+                    $fila->estado = match (true) {
+                        ! $anteriorPasable => self::BLOQUEADO,
+                        $completo => self::COMPLETADO,
+                        default => self::EN_CURSO,
+                    };
+
+                    // Un módulo sin lecciones no puede completarse, así que no frena la secuencia.
+                    $anteriorPasable = $anteriorPasable && ($completo || $fila->total == 0);
+
+                    return $fila;
+                });
+            });
+    }
+
+    /**
+     * Un módulo está completo cuando el usuario vio todas sus lecciones activas.
+     */
+    private function moduloCompleto(object $fila): bool
+    {
+        // FASE 4 (quizzes): sumar aquí "y el quiz del módulo está aprobado" (ModuloAprobado).
+        return $fila->total > 0 && $fila->completadas >= $fila->total;
+    }
+
+    /**
+     * Total de lecciones activas y completadas por el usuario, por cada módulo activo, en orden.
      */
     private function consulta(User $user): Builder
     {
@@ -99,7 +209,9 @@ class ProgresoService
                 $join->on('leccion_user.leccion_id', '=', 'leccions.id')->where('leccion_user.user_id', '=', $user->id);
             })
             ->where('modulos.activo', true)
-            ->groupBy('modulos.id', 'modulos.area_id')
+            ->groupBy('modulos.id', 'modulos.area_id', 'modulos.orden')
+            ->orderBy('modulos.orden')
+            ->orderBy('modulos.id')
             ->selectRaw('modulos.id, modulos.area_id, count(leccions.id) as total, count(leccion_user.leccion_id) as completadas');
     }
 
