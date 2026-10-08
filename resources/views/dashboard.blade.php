@@ -22,7 +22,7 @@
             @else
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     @foreach ($areas as $area)
-                        <article class="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                        <a href="{{ route('areas.show', $area) }}" class="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 p-5 transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <div class="flex items-center gap-4">
                                 <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 text-2xl">
                                     <i class="bi {{ $area->icono ?: 'bi-book' }}" aria-hidden="true"></i>
@@ -39,8 +39,8 @@
                                 {{ trans_choice(':count módulo|:count módulos', $area->modulos_activos_count) }}
                             </div>
 
-                            {{-- Aquí irán luego el % de progreso y el enlace al área. --}}
-                        </article>
+                            {{-- Aquí irá luego el % de progreso. --}}
+                        </a>
                     @endforeach
                 </div>
             @endif
