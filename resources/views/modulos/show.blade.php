@@ -16,6 +16,13 @@
                 Volver a {{ $area->nombre }}
             </a>
 
+            @if (session('aviso'))
+                <div role="alert" class="mt-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                    <i class="bi bi-info-circle-fill mt-0.5" aria-hidden="true"></i>
+                    <span>{{ session('aviso') }}</span>
+                </div>
+            @endif
+
             @if ($modulo->descripcion)
                 <p class="mt-4 text-gray-600">{{ $modulo->descripcion }}</p>
             @endif
@@ -58,7 +65,22 @@
                 </ol>
             @endif
 
-            {{-- Aquí irá luego el acceso al quiz del módulo. --}}
+            @if ($tieneQuiz)
+                <div class="mt-6">
+                    @if ($leccionesCompletas)
+                        <a href="{{ route('quiz.show', $modulo) }}" class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            <i class="bi bi-patch-question" aria-hidden="true"></i>
+                            Rendir quiz del módulo
+                        </a>
+                    @else
+                        <span aria-disabled="true" class="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-gray-100 px-5 py-3 font-semibold text-gray-500">
+                            <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                            Rendir quiz del módulo
+                        </span>
+                        <p class="mt-2 text-center text-sm text-gray-500">Completa todas las lecciones para desbloquear el quiz.</p>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

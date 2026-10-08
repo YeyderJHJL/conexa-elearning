@@ -16,6 +16,13 @@
                 Volver al inicio
             </a>
 
+            @if (session('aviso'))
+                <div role="alert" class="mt-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                    <i class="bi bi-lock-fill mt-0.5" aria-hidden="true"></i>
+                    <span>{{ session('aviso') }}</span>
+                </div>
+            @endif
+
             @if ($area->descripcion)
                 <p class="mt-4 text-gray-600">{{ $area->descripcion }}</p>
             @endif
@@ -30,52 +37,63 @@
                 <ol class="mt-6 space-y-3 sm:space-y-4">
                     @foreach ($modulos as $modulo)
                         @php
+                            $estado = $estadosModulos[$modulo->id] ?? 'bloqueado';
                             $porcentaje = $progresoModulos[$modulo->id] ?? 0;
-                            $completo = $porcentaje >= 100;
-                            $bloqueado = $modulo->estado === 'bloqueado' && ! $completo;
+                            $completo = $estado === 'completado';
+                            $bloqueado = $estado === 'bloqueado';
+                            $accesible = ! $bloqueado || $esAdmin;
                         @endphp
                         <li>
-                        <a href="{{ route('modulos.show', $modulo) }}" class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 {{ $bloqueado ? 'opacity-70' : '' }}">
-                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold {{ $bloqueado ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-600' }}">
-                                {{ $loop->iteration }}
-                            </span>
-
-                            <div class="min-w-0 flex-1">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug">{{ $modulo->titulo }}</h3>
-
+                            <a
+                                @if ($accesible) href="{{ route('modulos.show', $modulo) }}" @else aria-disabled="true" @endif
+                                class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 {{ $accesible ? 'transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500' : 'cursor-not-allowed' }} {{ $bloqueado ? 'opacity-70' : '' }}"
+                            >
+                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold {{ $completo ? 'bg-emerald-50 text-emerald-600' : ($bloqueado ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-600') }}">
                                     @if ($completo)
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                                            <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Completado
-                                        </span>
+                                        <i class="bi bi-check-lg text-xl" aria-hidden="true"></i>
                                     @elseif ($bloqueado)
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                                            <i class="bi bi-lock-fill" aria-hidden="true"></i> Bloqueado
-                                        </span>
+                                        <i class="bi bi-lock-fill" aria-hidden="true"></i>
                                     @else
-                                        <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
-                                            <i class="bi bi-unlock" aria-hidden="true"></i> Disponible
-                                        </span>
+                                        {{ $loop->iteration }}
                                     @endif
-                                </div>
+                                </span>
 
-                                @if ($modulo->descripcion)
-                                    <p class="mt-1 text-sm text-gray-600">{{ $modulo->descripcion }}</p>
-                                @endif
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug">{{ $modulo->titulo }}</h3>
 
-                                <p class="mt-3 text-sm text-gray-500">
-                                    <i class="bi bi-journal-text" aria-hidden="true"></i>
-                                    {{ trans_choice(':count lección|:count lecciones', $modulo->lecciones_activas_count) }}
-                                </p>
-
-                                <div class="mt-3 flex items-center gap-3">
-                                    <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $porcentaje }}" aria-valuemin="0" aria-valuemax="100">
-                                        <div class="h-full rounded-full {{ $completo ? 'bg-emerald-500' : 'bg-blue-600' }}" style="width: {{ $porcentaje }}%"></div>
+                                        @if ($completo)
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Completado
+                                            </span>
+                                        @elseif ($bloqueado)
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+                                                <i class="bi bi-lock-fill" aria-hidden="true"></i> Bloqueado
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                                                <i class="bi bi-play-circle" aria-hidden="true"></i> En curso
+                                            </span>
+                                        @endif
                                     </div>
-                                    <span class="text-sm font-semibold {{ $completo ? 'text-emerald-600' : 'text-blue-600' }}">{{ $porcentaje }}%</span>
+
+                                    @if ($modulo->descripcion)
+                                        <p class="mt-1 text-sm text-gray-600">{{ $modulo->descripcion }}</p>
+                                    @endif
+
+                                    <p class="mt-3 text-sm text-gray-500">
+                                        <i class="bi bi-journal-text" aria-hidden="true"></i>
+                                        {{ trans_choice(':count lección|:count lecciones', $modulo->lecciones_activas_count) }}
+                                    </p>
+
+                                    <div class="mt-3 flex items-center gap-3">
+                                        <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $porcentaje }}" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="h-full rounded-full {{ $completo ? 'bg-emerald-500' : 'bg-blue-600' }}" style="width: {{ $porcentaje }}%"></div>
+                                        </div>
+                                        <span class="text-sm font-semibold {{ $completo ? 'text-emerald-600' : 'text-blue-600' }}">{{ $porcentaje }}%</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
                         </li>
                     @endforeach
                 </ol>

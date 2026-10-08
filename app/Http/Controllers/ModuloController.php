@@ -22,6 +22,8 @@ class ModuloController extends Controller
             404
         );
 
+        $this->exigirModuloDesbloqueado($request, $modulo);
+
         $lecciones = $modulo->lecciones()->where('activa', true)->get();
 
         $completadas = $request->user()
@@ -34,6 +36,8 @@ class ModuloController extends Controller
             'area' => $modulo->area,
             'lecciones' => $lecciones,
             'completadas' => $completadas,
+            'tieneQuiz' => $modulo->quiz()->whereHas('preguntas')->exists(),
+            'leccionesCompletas' => $completadas->count() >= $lecciones->count(),
         ]);
     }
 }
