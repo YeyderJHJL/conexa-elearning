@@ -18,11 +18,13 @@ class DashboardController extends Controller
             ->where('activa', true)
             ->withCount(['modulos as modulos_activos_count' => fn ($query) => $query->where('activo', true)])
             ->orderBy('orden')
+            ->orderBy('id')
             ->get();
 
         $resumen = $progreso->resumen($request->user(), $areas);
 
         return view('dashboard', [
+            'continuar' => $progreso->siguienteLeccion($request->user(), $areas),
             'areas' => $areas,
             'progresoAreas' => $resumen['areas'],
             'progresoGlobal' => $resumen['global'],

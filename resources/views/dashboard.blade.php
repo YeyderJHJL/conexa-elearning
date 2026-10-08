@@ -35,6 +35,17 @@
                     </div>
                 </section>
 
+                @if ($continuar)
+                    <a href="{{ route('lecciones.show', $continuar) }}" class="mb-6 flex items-center justify-between gap-4 rounded-2xl bg-blue-600 p-5 text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mb-8">
+                        <div class="min-w-0">
+                            <p class="text-sm text-blue-100">Continuar donde quedaste</p>
+                            <p class="mt-1 truncate font-semibold">{{ $continuar->titulo }}</p>
+                            <p class="truncate text-sm text-blue-100">{{ $continuar->modulo->titulo }}</p>
+                        </div>
+                        <i class="bi bi-play-circle-fill shrink-0 text-4xl" aria-hidden="true"></i>
+                    </a>
+                @endif
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     @foreach ($areas as $area)
                         <a href="{{ route('areas.show', $area) }}" class="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 p-5 transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
