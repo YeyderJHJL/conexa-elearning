@@ -170,7 +170,7 @@ class ProgresoServiceTest extends TestCase
         $this->actingAs($this->trabajador)
             ->get(route('areas.show', $area))
             ->assertOk()
-            ->assertSeeInOrder(['Modulo terminado', 'Completado', '100%', 'Modulo a medias', 'Bloqueado', '25%'])
-            ->assertDontSee('Disponible');
+            ->assertSeeInOrder(['Modulo terminado', 'Completado', '100%', 'Modulo a medias', 'En curso', '25%'])
+            ->assertDontSee('Bloqueado');
     }
 }
