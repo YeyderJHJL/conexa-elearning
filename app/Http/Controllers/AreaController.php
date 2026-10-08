@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
-use App\Models\Modulo;
 use App\Services\ProgresoService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AreaController extends Controller
 {
     /**
-     * Detalle de un área: sus módulos activos con un estado provisional.
+     * Detalle de un área: sus módulos activos con su avance y su estado en la secuencia.
      */
     public function show(Request $request, Area $area, ProgresoService $progreso): View
     {
@@ -27,22 +25,10 @@ class AreaController extends Controller
 
         return view('areas.show', [
             'area' => $area,
-            'modulos' => $this->asignarEstados($modulos),
+            'modulos' => $modulos,
             'progresoModulos' => $progreso->porModulos($request->user(), $area),
+            'estadosModulos' => $progreso->estados($request->user(), $area),
+            'esAdmin' => $request->user()->esAdmin(),
         ]);
-    }
-
-    /**
-     * Estado provisional de cada módulo: el primero queda disponible y el resto bloqueado.
-     * Se reemplazará por el cálculo real de progreso (ProgresoService).
-     *
-     * @param  Collection<int, Modulo>  $modulos
-     * @return Collection<int, Modulo>
-     */
-    private function asignarEstados(Collection $modulos): Collection
-    {
-        return $modulos->each(function ($modulo, int $indice) {
-            $modulo->estado = $indice === 0 ? 'disponible' : 'bloqueado';
-        });
     }
 }

@@ -52,7 +52,7 @@ class AreaDetalleTest extends TestCase
         $this->actingAs($trabajador)
             ->get(route('areas.show', $area))
             ->assertOk()
-            ->assertSeeInOrder(['Primer modulo', 'Disponible', 'Segundo modulo', 'Bloqueado'])
+            ->assertSeeInOrder(['Primer modulo', 'En curso', 'Segundo modulo', 'Bloqueado'])
             ->assertSee('Descripcion uno')
             ->assertSee('2 lecciones')
             ->assertDontSee('Modulo oculto');
