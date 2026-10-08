@@ -21,10 +21,6 @@ class LeccionsTable
                     ->sortable(),
                 TextColumn::make('titulo')
                     ->searchable(),
-                TextColumn::make('tipo')
-                    ->searchable(),
-                TextColumn::make('url_recurso')
-                    ->searchable(),
                 TextColumn::make('duracion_min')
                     ->numeric()
                     ->sortable(),

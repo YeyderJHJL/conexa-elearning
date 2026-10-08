@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Leccions\Schemas;
 
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
 
 class LeccionForm
 {
@@ -19,13 +20,16 @@ class LeccionForm
                     ->required(),
                 TextInput::make('titulo')
                     ->required(),
-                Select::make('tipo')
-                    ->options(['texto' => 'Texto', 'video' => 'Video', 'pdf' => 'PDF'])
-                    ->default('texto')
-                    ->required(),
-                Textarea::make('contenido')
+                RichEditor::make('contenido')
+                    ->label('Texto / resumen')
                     ->columnSpanFull(),
-                TextInput::make('url_recurso'),
+                TextInput::make('url_video')
+                    ->label('URL del video (YouTube/Drive)')
+                    ->url(),
+                FileUpload::make('archivo_pdf')
+                    ->label('PDF adjunto')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->directory('lecciones'),
                 TextInput::make('duracion_min')
                     ->numeric(),
                 TextInput::make('orden')
@@ -33,7 +37,7 @@ class LeccionForm
                     ->numeric()
                     ->default(0),
                 Toggle::make('activa')
-                    ->required(),
+                    ->default(true),
             ]);
     }
 }
