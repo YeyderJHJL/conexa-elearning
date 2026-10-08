@@ -64,7 +64,8 @@ class LeccionController extends Controller
     }
 
     /**
-     * Exige acceso al área de la lección; para trabajadores, además, que todo esté activo.
+     * Exige acceso al área de la lección; para trabajadores, además, que todo esté activo
+     * y que el módulo no esté bloqueado por la secuencia.
      */
     private function autorizarAcceso(Request $request, Leccion $leccion): void
     {
@@ -76,6 +77,8 @@ class LeccionController extends Controller
             ($leccion->activa && $leccion->modulo->activo && $leccion->modulo->area->activa) || $request->user()->esAdmin(),
             404
         );
+
+        $this->exigirModuloDesbloqueado($request, $leccion->modulo);
     }
 
     /**
