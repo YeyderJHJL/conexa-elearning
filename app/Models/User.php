@@ -51,7 +51,7 @@ class User extends Authenticatable implements FilamentUser
     /** @var array<string, string> */
     public const ETIQUETAS_ROL = [
         'admin' => 'Administrador',
-        'trabajador' => 'Trabajador',
+        'trabajador' => 'Colaborador',
     ];
 
     public function areas()
