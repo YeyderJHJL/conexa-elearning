@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Filament\Support\ColumnasComunes;
+use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class UsersTable
@@ -17,34 +20,48 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')
                     ->label('Nombre')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
+                    ->weight('semibold')
+                    ->description(fn (User $record) => $record->email)
+                    ->searchable(['name', 'email'])
+                    ->sortable(),
                 TextColumn::make('rol')
-                    ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
+                    ->label('Rol')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state) => User::ETIQUETAS_ROL[$state] ?? ucfirst($state))
+                    ->color(fn (string $state) => $state === 'admin' ? 'secondary' : 'primary')
+                    ->icon(fn (string $state) => $state === 'admin' ? Heroicon::OutlinedShieldCheck : Heroicon::OutlinedUser)
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('cargo')
+                    ->placeholder('—')
                     ->searchable(),
+                ColumnasComunes::recuento('areas', 'Áreas', Heroicon::OutlinedSquares2x2),
                 TextColumn::make('fecha_ingreso')
-                    ->date()
+                    ->label('Ingreso')
+                    ->date('d/m/Y')
+                    ->icon(Heroicon::OutlinedCalendarDays)
+                    ->placeholder('—')
                     ->sortable(),
-                IconColumn::make('activo')
-                    ->boolean(),
+                ColumnasComunes::estado('activo', 'Activo', 'Inactivo'),
+                TextColumn::make('email_verified_at')
+                    ->label('Correo verificado')
+                    ->dateTime('d/m/Y H:i')
+                    ->placeholder('Sin verificar')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                ...ColumnasComunes::fechas(),
             ])
             ->filters([
-                //
+                SelectFilter::make('rol')
+                    ->label('Rol')
+                    ->options(User::ETIQUETAS_ROL),
+                ColumnasComunes::filtroEstado('activo', 'Estado', 'Activos', 'Inactivos'),
+                SelectFilter::make('area')
+                    ->label('Área asignada')
+                    ->relationship('areas', 'nombre')
+                    ->searchable()
+                    ->preload(),
             ])
+            ->defaultSort('name')
             ->recordActions([
                 EditAction::make(),
             ])
