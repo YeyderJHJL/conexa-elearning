@@ -24,7 +24,7 @@ class DashboardController extends Controller
         $resumen = $progreso->resumen($request->user(), $areas);
 
         return view('dashboard', [
-            'continuar' => $progreso->siguienteLeccion($request->user(), $areas),
+            'continuar' => $progreso->siguientePaso($request->user(), $areas),
             'areas' => $areas,
             'progresoAreas' => $resumen['areas'],
             'progresoGlobal' => $resumen['global'],

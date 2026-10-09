@@ -306,7 +306,7 @@ class QuizTest extends TestCase
 
     public function test_module_page_offers_the_quiz_only_when_lessons_are_completed(): void
     {
-        $this->quiz();
+        $quiz = $this->quiz();
 
         $this->actingAs($this->trabajador)
             ->get(route('modulos.show', $this->modulo))
@@ -314,13 +314,14 @@ class QuizTest extends TestCase
             ->assertSee('Rendir quiz del módulo')
             ->assertSee(route('quiz.show', $this->modulo), false);
 
+        // El segundo módulo solo se abre cuando el primero está completo, quiz aprobado incluido.
+        IntentoQuiz::factory()->create(['user_id' => $this->trabajador->id, 'quiz_id' => $quiz->id, 'puntaje' => 100, 'aprobado' => true]);
         $pendiente = $this->moduloConLeccion($this->area, completada: false);
         $this->quiz($pendiente);
-        $this->modulo->update(['orden' => 0]);
 
         $this->get(route('modulos.show', $pendiente))
             ->assertOk()
             ->assertSee('Completa todas las lecciones para desbloquear el quiz.')
-            ->assertDontSee(route('quiz.show', $pendiente), false);
+            ->assertDontSee('href="'.route('quiz.show', $pendiente).'"', false);
     }
 }

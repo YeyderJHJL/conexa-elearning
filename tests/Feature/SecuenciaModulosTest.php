@@ -120,10 +120,11 @@ class SecuenciaModulosTest extends TestCase
         $actual = $this->modulo(3, 1);
         $this->modulo(2, 0);
 
-        $siguiente = $this->servicio->siguienteLeccion($this->trabajador);
+        $paso = $this->servicio->siguientePaso($this->trabajador);
 
-        $this->assertSame($actual->lecciones->get(1)->id, $siguiente->id);
-        $this->assertSame($actual->id, $siguiente->modulo->id);
+        $this->assertSame('leccion', $paso['tipo']);
+        $this->assertSame($actual->lecciones->get(1)->id, $paso['leccion']->id);
+        $this->assertSame($actual->id, $paso['leccion']->modulo->id);
     }
 
     public function test_next_lesson_skips_finished_areas_and_is_null_when_nothing_is_pending(): void
@@ -133,18 +134,18 @@ class SecuenciaModulosTest extends TestCase
         $otra = $this->area('Seguridad', orden: 2);
         $pendiente = $this->modulo(2, 0, area: $otra);
 
-        $this->assertSame($pendiente->lecciones->first()->id, $this->servicio->siguienteLeccion($this->trabajador)->id);
+        $this->assertSame($pendiente->lecciones->first()->id, $this->servicio->siguientePaso($this->trabajador)['leccion']->id);
 
         $this->trabajador->lecciones()->attach($pendiente->lecciones()->pluck('id'));
 
-        $this->assertNull($this->servicio->siguienteLeccion($this->trabajador));
+        $this->assertNull($this->servicio->siguientePaso($this->trabajador));
     }
 
     public function test_next_lesson_is_null_without_areas(): void
     {
         $sinAreas = User::factory()->create(['rol' => 'trabajador']);
 
-        $this->assertNull($this->servicio->siguienteLeccion($sinAreas));
+        $this->assertNull($this->servicio->siguientePaso($sinAreas));
     }
 
     public function test_locked_module_redirects_to_the_area_with_a_notice(): void

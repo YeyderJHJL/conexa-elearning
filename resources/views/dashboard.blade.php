@@ -36,13 +36,19 @@
                 </section>
 
                 @if ($continuar)
-                    <a href="{{ route('lecciones.show', $continuar) }}" class="mb-6 flex items-center justify-between gap-4 rounded-2xl bg-blue-600 p-5 text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mb-8">
+                    @php
+                        $esQuiz = $continuar['tipo'] === 'quiz';
+                        $destino = $esQuiz ? route('quiz.show', $continuar['modulo']) : route('lecciones.show', $continuar['leccion']);
+                        $titulo = $esQuiz ? 'Rendir el quiz: '.$continuar['modulo']->quiz->titulo : $continuar['leccion']->titulo;
+                        $moduloTitulo = $esQuiz ? $continuar['modulo']->titulo : $continuar['leccion']->modulo->titulo;
+                    @endphp
+                    <a href="{{ $destino }}" class="mb-6 flex items-center justify-between gap-4 rounded-2xl bg-blue-600 p-5 text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mb-8">
                         <div class="min-w-0">
                             <p class="text-sm text-blue-100">Continuar donde quedaste</p>
-                            <p class="mt-1 truncate font-semibold">{{ $continuar->titulo }}</p>
-                            <p class="truncate text-sm text-blue-100">{{ $continuar->modulo->titulo }}</p>
+                            <p class="mt-1 truncate font-semibold">{{ $titulo }}</p>
+                            <p class="truncate text-sm text-blue-100">{{ $moduloTitulo }}</p>
                         </div>
-                        <i class="bi bi-play-circle-fill shrink-0 text-4xl" aria-hidden="true"></i>
+                        <i class="bi {{ $esQuiz ? 'bi-patch-question-fill' : 'bi-play-circle-fill' }} shrink-0 text-4xl" aria-hidden="true"></i>
                     </a>
                 @endif
 

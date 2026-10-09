@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modulo;
+use App\Services\QuizService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ModuloController extends Controller
 {
     /**
-     * Detalle de un módulo: sus lecciones activas y cuáles completó el usuario.
+     * Detalle de un módulo: sus lecciones activas, cuáles completó el usuario y el estado de su quiz.
      */
-    public function show(Request $request, Modulo $modulo): View
+    public function show(Request $request, Modulo $modulo, QuizService $quizzes): View
     {
         $modulo->load('area');
 
@@ -31,13 +32,18 @@ class ModuloController extends Controller
             ->whereIn('leccions.id', $lecciones->modelKeys())
             ->pluck('leccions.id');
 
+        $quiz = $modulo->quiz()->withCount('preguntas')->first();
+        $quiz = $quiz?->preguntas_count > 0 ? $quiz : null;
+
         return view('modulos.show', [
             'modulo' => $modulo,
             'area' => $modulo->area,
             'lecciones' => $lecciones,
             'completadas' => $completadas,
-            'tieneQuiz' => $modulo->quiz()->whereHas('preguntas')->exists(),
             'leccionesCompletas' => $completadas->count() >= $lecciones->count(),
+            'quiz' => $quiz,
+            'estadoQuiz' => $quiz ? $quizzes->estadoDe($request->user(), $quiz) : null,
+            'notaMinima' => $quiz ? $quizzes->notaMinima($quiz) : null,
         ]);
     }
 }

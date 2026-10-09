@@ -28,6 +28,31 @@ class QuizService
     }
 
     /**
+     * Estado del usuario en un quiz: no_rendido, aprobado (con su mejor intento aprobado)
+     * o desaprobado (con su último intento).
+     *
+     * @return array{estado: 'no_rendido'|'aprobado'|'desaprobado', ultimo: IntentoQuiz|null, aprobado: IntentoQuiz|null, intentos: int}
+     */
+    public function estadoDe(User $user, Quiz $quiz): array
+    {
+        $intentos = IntentoQuiz::query()
+            ->where('user_id', $user->id)
+            ->where('quiz_id', $quiz->id)
+            ->orderByDesc('id')
+            ->get();
+
+        $ultimo = $intentos->first();
+        $aprobado = $intentos->where('aprobado', true)->sortByDesc('puntaje')->first();
+
+        return [
+            'estado' => $aprobado ? 'aprobado' : ($ultimo ? 'desaprobado' : 'no_rendido'),
+            'ultimo' => $ultimo,
+            'aprobado' => $aprobado,
+            'intentos' => $intentos->count(),
+        ];
+    }
+
+    /**
      * Califica las respuestas y guarda un nuevo intento (los anteriores se conservan).
      *
      * @param  array<int|string, int|string|null>  $respuestas  Opción elegida por id de pregunta.
