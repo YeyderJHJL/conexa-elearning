@@ -3,10 +3,12 @@
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DescargaResumenController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\LeccionController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\ReporteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/modulos/{modulo}', [ModuloController::class, 'show'])->name('modulos.show');
     Route::get('/modulos/{modulo}/resumen', [DescargaResumenController::class, 'modulo'])->name('modulos.resumen');
     Route::get('/areas/{area}/resumen', [DescargaResumenController::class, 'area'])->name('areas.resumen');
+    Route::get('/areas/{area}/encuesta', [FeedbackController::class, 'create'])->name('areas.encuesta');
+    Route::post('/areas/{area}/feedback', [FeedbackController::class, 'store'])->name('areas.feedback');
     Route::get('/modulos/{modulo}/quiz', [QuizController::class, 'show'])->name('quiz.show');
     Route::post('/modulos/{modulo}/quiz', [QuizController::class, 'store'])->name('quiz.enviar');
     Route::get('/modulos/{modulo}/quiz/intentos/{intento}', [QuizController::class, 'resultado'])->name('quiz.resultado');
@@ -32,6 +36,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/lecciones/{leccion}/completar', [LeccionController::class, 'completar'])->name('lecciones.completar');
     Route::get('/lecciones/{leccion}/pdf', [LeccionController::class, 'pdf'])->name('lecciones.pdf');
 });
+
+Route::get('/reportes/trabajadores/{usuario}', ReporteController::class)
+    ->middleware(['auth', 'admin'])
+    ->name('reportes.trabajador');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -54,30 +54,34 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     @foreach ($areas as $area)
-                        <a href="{{ route('areas.show', $area) }}" class="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 p-5 transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <div class="flex items-center gap-4">
-                                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 text-2xl">
-                                    <i class="bi {{ $area->icono ?: 'bi-book' }}" aria-hidden="true"></i>
-                                </span>
-                                <h3 class="text-lg font-semibold text-gray-900 leading-snug">{{ $area->nombre }}</h3>
-                            </div>
+                        <a
+                            href="{{ route('areas.show', $area) }}"
+                            style="--acento: {{ $area->color_acento }}"
+                            class="flex flex-col overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 transition hover:border-[var(--acento)] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--acento)]"
+                        >
+                            <x-portada :imagen="$area->imagen_url" :color="$area->color_acento" :icono="$area->icono" class="h-32 sm:h-36" />
+                            <div class="h-1 bg-[var(--acento)]"></div>
+
+                            <div class="flex flex-1 flex-col p-5">
+                            <h3 class="text-lg font-semibold text-gray-900 leading-snug">{{ $area->nombre }}</h3>
 
                             @if ($area->descripcion)
-                                <p class="mt-3 text-sm text-gray-600">{{ $area->descripcion }}</p>
+                                <p class="mt-2 text-sm text-gray-600">{{ $area->descripcion }}</p>
                             @endif
 
                             @php $porcentaje = $progresoAreas[$area->id] ?? 0; @endphp
-                            <div class="mt-4 pt-4 border-t border-gray-100">
+                            <div class="mt-auto pt-4">
                                 <div class="flex items-center justify-between text-sm text-gray-500">
                                     <span>
                                         <i class="bi bi-collection" aria-hidden="true"></i>
                                         {{ trans_choice(':count módulo|:count módulos', $area->modulos_activos_count) }}
                                     </span>
-                                    <span class="font-semibold {{ $porcentaje >= 100 ? 'text-emerald-600' : 'text-blue-600' }}">{{ $porcentaje }}%</span>
+                                    <span class="font-semibold {{ $porcentaje >= 100 ? 'text-emerald-600' : 'text-[color:var(--acento)]' }}">{{ $porcentaje }}%</span>
                                 </div>
                                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $porcentaje }}" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="h-full rounded-full {{ $porcentaje >= 100 ? 'bg-emerald-500' : 'bg-blue-600' }}" style="width: {{ $porcentaje }}%"></div>
+                                    <div class="h-full rounded-full {{ $porcentaje >= 100 ? 'bg-emerald-500' : 'bg-[var(--acento)]' }}" style="width: {{ $porcentaje }}%"></div>
                                 </div>
+                            </div>
                             </div>
                         </a>
                     @endforeach

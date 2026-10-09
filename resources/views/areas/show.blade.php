@@ -23,6 +23,15 @@
                 </div>
             @endif
 
+            @if (session('estado'))
+                <div role="status" class="mt-4 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                    <i class="bi bi-check-circle-fill mt-0.5" aria-hidden="true"></i>
+                    <span>{{ session('estado') }}</span>
+                </div>
+            @endif
+
+            <x-portada :imagen="$area->imagen_url" :color="$area->color_acento" :icono="$area->icono" class="mt-4 h-28 rounded-2xl sm:h-40" />
+
             @if ($area->descripcion)
                 <p class="mt-4 text-gray-600">{{ $area->descripcion }}</p>
             @endif
@@ -34,7 +43,7 @@
                     <p class="mt-1 text-gray-600">Vuelve pronto: el contenido se publicará aquí.</p>
                 </div>
             @else
-                <ol class="mt-6 space-y-3 sm:space-y-4">
+                <ol class="mt-6 space-y-3 sm:space-y-4" style="--acento: {{ $area->color_acento }}">
                     @foreach ($modulos as $modulo)
                         @php
                             $estado = $estadosModulos[$modulo->id] ?? 'bloqueado';
@@ -46,17 +55,32 @@
                         <li>
                             <a
                                 @if ($accesible) href="{{ route('modulos.show', $modulo) }}" @else aria-disabled="true" @endif
-                                class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 {{ $accesible ? 'transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500' : 'cursor-not-allowed' }} {{ $bloqueado ? 'opacity-70' : '' }}"
+                                class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 {{ $accesible ? 'transition hover:border-[var(--acento)] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--acento)]' : 'cursor-not-allowed' }} {{ $bloqueado ? 'opacity-70' : '' }}"
                             >
-                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold {{ $completo ? 'bg-emerald-50 text-emerald-600' : ($bloqueado ? 'bg-gray-100 text-gray-500' : 'bg-blue-50 text-blue-600') }}">
-                                    @if ($completo)
-                                        <i class="bi bi-check-lg text-xl" aria-hidden="true"></i>
-                                    @elseif ($bloqueado)
-                                        <i class="bi bi-lock-fill" aria-hidden="true"></i>
-                                    @else
-                                        {{ $loop->iteration }}
-                                    @endif
-                                </span>
+                                @if ($modulo->imagen_url)
+                                    <span class="relative block h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-20 sm:w-20">
+                                        <img src="{{ $modulo->imagen_url }}" alt="" loading="lazy" class="h-full w-full object-cover {{ $bloqueado ? 'grayscale' : '' }}" onerror="this.remove()">
+                                        <span class="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold text-white shadow ring-2 ring-white {{ $completo ? 'bg-emerald-500' : ($bloqueado ? 'bg-gray-500' : 'bg-[var(--acento)]') }}">
+                                            @if ($completo)
+                                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                                            @elseif ($bloqueado)
+                                                <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                                            @else
+                                                {{ $loop->iteration }}
+                                            @endif
+                                        </span>
+                                    </span>
+                                @else
+                                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-semibold {{ $completo ? 'bg-emerald-50 text-emerald-600' : ($bloqueado ? 'bg-gray-100 text-gray-500' : 'bg-[color-mix(in_srgb,var(--acento)_12%,white)] text-[color:var(--acento)]') }}">
+                                        @if ($completo)
+                                            <i class="bi bi-check-lg text-xl" aria-hidden="true"></i>
+                                        @elseif ($bloqueado)
+                                            <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                                        @else
+                                            {{ $loop->iteration }}
+                                        @endif
+                                    </span>
+                                @endif
 
                                 <div class="min-w-0 flex-1">
                                     <div class="flex flex-wrap items-center justify-between gap-2">
@@ -71,7 +95,7 @@
                                                 <i class="bi bi-lock-fill" aria-hidden="true"></i> Bloqueado
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-[color-mix(in_srgb,var(--acento)_12%,white)] px-2.5 py-1 text-xs font-medium text-[color:var(--acento)]">
                                                 <i class="bi bi-play-circle" aria-hidden="true"></i> En curso
                                             </span>
                                         @endif
@@ -88,14 +112,49 @@
 
                                     <div class="mt-3 flex items-center gap-3">
                                         <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $porcentaje }}" aria-valuemin="0" aria-valuemax="100">
-                                            <div class="h-full rounded-full {{ $completo ? 'bg-emerald-500' : 'bg-blue-600' }}" style="width: {{ $porcentaje }}%"></div>
+                                            <div class="h-full rounded-full {{ $completo ? 'bg-emerald-500' : 'bg-[var(--acento)]' }}" style="width: {{ $porcentaje }}%"></div>
                                         </div>
-                                        <span class="text-sm font-semibold {{ $completo ? 'text-emerald-600' : 'text-blue-600' }}">{{ $porcentaje }}%</span>
+                                        <span class="text-sm font-semibold {{ $completo ? 'text-emerald-600' : 'text-[color:var(--acento)]' }}">{{ $porcentaje }}%</span>
                                     </div>
                                 </div>
                             </a>
                         </li>
                     @endforeach
+
+                    {{-- Último paso de la lista: la encuesta, que solo existe cuando el área está completada. --}}
+                    @if ($estadoEncuesta)
+                        @php $pendiente = $estadoEncuesta === 'pendiente'; @endphp
+                        <li>
+                            <a
+                                @if ($pendiente) href="{{ route('areas.encuesta', $area) }}" @else aria-disabled="true" @endif
+                                class="flex items-start gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 {{ $pendiente ? 'transition hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500' : 'cursor-default' }}"
+                            >
+                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl {{ $pendiente ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600' }}">
+                                    <i class="bi {{ $pendiente ? 'bi-chat-heart' : 'bi-check-lg text-xl' }}" aria-hidden="true"></i>
+                                </span>
+
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug">Encuesta de satisfacción</h3>
+
+                                        @if ($pendiente)
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                                                <i class="bi bi-play-circle" aria-hidden="true"></i> Pendiente
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Respondida
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <p class="mt-1 text-sm text-gray-600">
+                                        {{ $pendiente ? 'Cuéntanos cómo te fue en esta área: son 3 preguntas rápidas.' : 'Gracias por contarnos tu experiencia.' }}
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
                 </ol>
             @endif
 
