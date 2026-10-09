@@ -2,14 +2,15 @@
 
 namespace App\Providers\Filament;
 
+use Filament\FontProviders\GoogleFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -29,7 +30,20 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => config('marca.paletas.azul'),
+                'secondary' => config('marca.paletas.dorado'),
+            ])
+            ->font(config('marca.fuente'), provider: GoogleFontProvider::class)
+            ->brandName(config('marca.nombre'))
+            ->brandLogo(fn () => asset('images/'.rawurlencode(config('marca.logos.oscuro'))))
+            ->darkModeBrandLogo(fn () => asset('images/'.rawurlencode(config('marca.logos.claro'))))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(fn () => asset('favicon.png'))
+            ->navigationGroups([
+                NavigationGroup::make('Contenido'),
+                NavigationGroup::make('Evaluación'),
+                NavigationGroup::make('Personas'),
+                NavigationGroup::make('Reportes'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
