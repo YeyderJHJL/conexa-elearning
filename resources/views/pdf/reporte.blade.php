@@ -8,20 +8,21 @@
 
         body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1f2937; line-height: 1.45; }
 
-        .encabezado { position: fixed; top: -70px; left: 0; right: 0; height: 56px; border-bottom: 2px solid #2563eb; }
+        .encabezado { position: fixed; top: -70px; left: 0; right: 0; height: 56px; border-bottom: 2px solid #D7A743; }
         .encabezado table { width: 100%; border-collapse: collapse; }
         .logo { width: 150px; height: 44px; }
         .logo img { max-height: 44px; max-width: 150px; }
-        .logo-reservado { width: 150px; height: 40px; border: 1px dashed #cbd5e1; color: #94a3b8; font-size: 9px; text-align: center; padding-top: 13px; }
+        .logo-texto { font-size: 15px; font-weight: bold; letter-spacing: 1px; color: #0E1A34; line-height: 1.1; padding-top: 6px; }
+        .logo-texto span { display: block; font-size: 7px; font-weight: normal; letter-spacing: 2px; color: #8C8C8E; }
         .titulo { text-align: right; vertical-align: middle; }
-        .titulo h1 { margin: 0; font-size: 17px; color: #1e3a8a; }
+        .titulo h1 { margin: 0; font-size: 17px; color: #0E1A34; }
         .titulo p { margin: 2px 0 0; color: #64748b; font-size: 9px; }
 
         .pie { position: fixed; bottom: -45px; left: 0; right: 0; height: 24px; border-top: 1px solid #e2e8f0; padding-top: 6px; color: #94a3b8; font-size: 8px; }
         .pie table { width: 100%; border-collapse: collapse; }
         .pagina:before { content: counter(page); }
 
-        h2 { font-size: 12px; color: #1e3a8a; margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid #e2e8f0; }
+        h2 { font-size: 12px; color: #0E1A34; margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid #e2e8f0; }
         h3 { font-size: 11px; margin: 0; color: #111827; }
 
         table.datos { width: 100%; border-collapse: collapse; }
@@ -29,20 +30,20 @@
         table.datos td.etiqueta { width: 18%; background: #f8fafc; color: #475569; font-weight: bold; }
 
         table.tabla { width: 100%; border-collapse: collapse; margin-top: 6px; }
-        table.tabla th { background: #eff6ff; color: #1e3a8a; text-align: left; padding: 5px 6px; border: 1px solid #dbeafe; font-size: 9px; }
+        table.tabla th { background: #F2F5FA; color: #0E1A34; text-align: left; padding: 5px 6px; border: 1px solid #C9D5E8; font-size: 9px; }
         table.tabla td { padding: 5px 6px; border: 1px solid #e2e8f0; vertical-align: top; }
         table.tabla tr { page-break-inside: avoid; }
         .centro { text-align: center; }
 
         .barra { height: 7px; background: #e2e8f0; width: 100%; }
-        .barra-relleno { height: 7px; background: #2563eb; }
-        .barra-completa { background: #059669; }
+        .barra-relleno { height: 7px; background: #D7A743; }
+        .barra-completa { background: #D7A743; }
 
         .resumen td { vertical-align: middle; }
-        .porcentaje { font-size: 24px; font-weight: bold; color: #1e3a8a; }
+        .porcentaje { font-size: 24px; font-weight: bold; color: #0E1A34; }
 
-        .estado-completado { color: #047857; font-weight: bold; }
-        .estado-en_curso { color: #1d4ed8; font-weight: bold; }
+        .estado-completado { color: #B98A2E; font-weight: bold; }
+        .estado-en_curso { color: #4A6FA5; font-weight: bold; }
         .estado-bloqueado { color: #6b7280; }
         .ok { color: #047857; }
         .mal { color: #b45309; }
@@ -56,18 +57,19 @@
 <body>
     @php
         $etiquetasEstado = ['completado' => 'Completado', 'en_curso' => 'En curso', 'bloqueado' => 'Bloqueado'];
-        $logo = public_path('images/logo-conexa.png');
+        $logo = public_path('images/'.config('marca.logos.oscuro'));
+        // Dompdf necesita la extensión GD para dibujar un PNG; sin ella se usa el nombre en texto.
+        $conLogo = extension_loaded('gd') && is_file($logo);
     @endphp
 
     <div class="encabezado">
         <table>
             <tr>
                 <td style="width: 160px;">
-                    @if (is_file($logo))
-                        <div class="logo"><img src="{{ $logo }}" alt="Conexa"></div>
+                    @if ($conLogo)
+                        <div class="logo"><img src="{{ $logo }}" alt="{{ config('marca.nombre') }}"></div>
                     @else
-                        {{-- Espacio reservado: colocar el logo en public/images/logo-conexa.png --}}
-                        <div class="logo-reservado">Logo Conexa</div>
+                        <div class="logo-texto">CONEXA<span>CAPITAL CENTRAL</span></div>
                     @endif
                 </td>
                 <td class="titulo">

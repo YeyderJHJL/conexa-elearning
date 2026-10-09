@@ -4,7 +4,7 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
             Resultado: {{ $intento->quiz->titulo }}
         </h2>
     </x-slot>
@@ -21,7 +21,7 @@
                     <i class="bi {{ $aprobado ? 'bi-trophy-fill' : 'bi-arrow-repeat' }}" aria-hidden="true"></i>
                 </span>
 
-                <p class="mt-4 text-5xl font-bold text-gray-900">{{ $intento->puntaje }}%</p>
+                <p class="mt-4 text-5xl font-bold text-marca-azul">{{ $intento->puntaje }}%</p>
 
                 <p class="mt-3">
                     @if ($aprobado)
@@ -35,7 +35,7 @@
                     @endif
                 </p>
 
-                <p class="mt-3 text-sm text-gray-600">
+                <p class="mt-3 text-sm text-marca-gris">
                     {{ $correctas }} de {{ $detalle['total'] }} {{ $detalle['total'] === 1 ? 'respuesta correcta' : 'respuestas correctas' }}
                     · Nota mínima: {{ $notaMinima }}%
                 </p>
@@ -43,11 +43,11 @@
 
             @if ($detalle['falladas']->isNotEmpty())
                 <section class="space-y-3" aria-label="Preguntas falladas">
-                    <h3 class="font-semibold text-gray-900">Preguntas que debes repasar</h3>
+                    <h3 class="font-semibold text-marca-azul">Preguntas que debes repasar</h3>
 
                     @foreach ($detalle['falladas'] as $fallada)
                         <article class="rounded-2xl bg-white p-4 shadow-sm border border-gray-100 sm:p-5">
-                            <p class="font-medium text-gray-900 leading-snug">{{ $fallada['enunciado'] }}</p>
+                            <p class="font-medium text-marca-azul leading-snug">{{ $fallada['enunciado'] }}</p>
 
                             <p class="mt-3 flex items-start gap-2 text-sm text-red-700">
                                 <i class="bi bi-x-circle-fill mt-0.5 shrink-0" aria-hidden="true"></i>
@@ -70,11 +70,11 @@
             @endif
 
             <div class="flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('quiz.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 {{ $aprobado ? 'border border-blue-200 text-blue-700 hover:bg-blue-50' : 'bg-blue-600 text-white shadow-sm hover:bg-blue-700' }}">
+                <a href="{{ route('quiz.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2 {{ $aprobado ? 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' : 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' }}">
                     <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
                     Reintentar
                 </a>
-                <a href="{{ route('modulos.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 {{ $aprobado ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700' : 'border border-blue-200 text-blue-700 hover:bg-blue-50' }}">
+                <a href="{{ route('modulos.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2 {{ $aprobado ? 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' : 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' }}">
                     <i class="bi bi-arrow-left" aria-hidden="true"></i>
                     Volver al módulo
                 </a>

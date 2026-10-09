@@ -4,14 +4,14 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
             {{ $leccion->titulo }}
         </h2>
     </x-slot>
 
     <div class="py-6 sm:py-12">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <a href="{{ route('modulos.show', $modulo) }}" class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700">
+            <a href="{{ route('modulos.show', $modulo) }}" class="inline-flex items-center gap-2 text-sm font-medium text-marca-azul hover:text-marca-profundo">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
                 Volver a {{ $modulo->titulo }}
             </a>
@@ -29,7 +29,7 @@
                             referrerpolicy="strict-origin-when-cross-origin"></iframe>
                     </div>
                 @elseif ($enlaceVideo = \Illuminate\Support\Str::sanitizeUrl($leccion->url_video))
-                    <a href="{{ $enlaceVideo }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-gray-100 text-blue-600 hover:border-blue-300">
+                    <a href="{{ $enlaceVideo }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-gray-100 text-marca-azul hover:border-marca-dorado">
                         <i class="bi bi-play-circle-fill text-2xl" aria-hidden="true"></i>
                         <span class="font-medium">Ver el video de esta lección</span>
                     </a>
@@ -47,19 +47,19 @@
             @if (filled($leccion->archivo_pdf))
                 <section class="flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-sm border border-gray-100 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex items-center gap-3">
-                        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-2xl text-blue-600">
+                        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-marca-azul/5 text-2xl text-marca-azul">
                             <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
                         </span>
                         <div>
-                            <h3 class="font-semibold text-gray-900">Material en PDF</h3>
-                            <p class="text-sm text-gray-500">Documento adjunto a esta lección</p>
+                            <h3 class="font-semibold text-marca-azul">Material en PDF</h3>
+                            <p class="text-sm text-marca-gris">Documento adjunto a esta lección</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <a href="{{ route('lecciones.pdf', $leccion) }}" target="_blank" rel="noopener" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 sm:flex-none">
+                        <a href="{{ route('lecciones.pdf', $leccion) }}" target="_blank" rel="noopener" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-marca-azul px-4 py-2 text-sm font-medium text-white hover:bg-marca-profundo sm:flex-none">
                             <i class="bi bi-eye" aria-hidden="true"></i> Ver
                         </a>
-                        <a href="{{ route('lecciones.pdf', ['leccion' => $leccion, 'descargar' => 1]) }}" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-blue-200 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 sm:flex-none">
+                        <a href="{{ route('lecciones.pdf', ['leccion' => $leccion, 'descargar' => 1]) }}" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-marca-azul/20 px-4 py-2 text-sm font-medium text-marca-azul hover:bg-marca-azul/5 sm:flex-none">
                             <i class="bi bi-download" aria-hidden="true"></i> Descargar
                         </a>
                     </div>
@@ -68,7 +68,7 @@
 
             <form method="POST" action="{{ route('lecciones.completar', $leccion) }}">
                 @csrf
-                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2">
                     <i class="bi bi-check2-circle" aria-hidden="true"></i>
                     @if ($completada)
                         Completada · {{ $siguiente ? 'continuar' : 'volver al módulo' }}
@@ -80,7 +80,7 @@
 
             <nav class="grid grid-cols-2 gap-3 text-sm" aria-label="Navegación entre lecciones">
                 @if ($anterior)
-                    <a href="{{ route('lecciones.show', $anterior) }}" class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-blue-300">
+                    <a href="{{ route('lecciones.show', $anterior) }}" class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-marca-dorado">
                         <i class="bi bi-chevron-left" aria-hidden="true"></i>
                         <span class="truncate">{{ $anterior->titulo }}</span>
                     </a>
@@ -89,7 +89,7 @@
                 @endif
 
                 @if ($siguiente)
-                    <a href="{{ route('lecciones.show', $siguiente) }}" class="flex items-center justify-end gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-blue-300">
+                    <a href="{{ route('lecciones.show', $siguiente) }}" class="flex items-center justify-end gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-marca-dorado">
                         <span class="truncate">{{ $siguiente->titulo }}</span>
                         <i class="bi bi-chevron-right" aria-hidden="true"></i>
                     </a>
