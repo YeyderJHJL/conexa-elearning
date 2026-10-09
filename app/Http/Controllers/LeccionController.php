@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leccion;
+use App\Services\ProgresoService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -32,17 +33,29 @@ class LeccionController extends Controller
     /**
      * Registra la lección como completada y avanza a la siguiente (o al módulo si era la última).
      */
-    public function completar(Request $request, Leccion $leccion): RedirectResponse
+    public function completar(Request $request, Leccion $leccion, ProgresoService $progreso): RedirectResponse
     {
         $this->autorizarAcceso($request, $leccion);
+
+        $moduloCompletadoAntes = $progreso->moduloCompletado($request->user(), $leccion->modulo);
 
         $request->user()->lecciones()->syncWithoutDetaching([$leccion->id]);
 
         [, $siguiente] = $this->vecinas($leccion);
 
-        return $siguiente
+        $redireccion = $siguiente
             ? redirect()->route('lecciones.show', $siguiente)
             : redirect()->route('modulos.show', $leccion->modulo_id);
+
+        // Solo detalle visual: celebra una vez, cuando esta lección es la que completa el módulo.
+        if (! $moduloCompletadoAntes && $progreso->moduloCompletado($request->user(), $leccion->modulo)) {
+            $redireccion->with('celebracion', [
+                'titulo' => '¡Módulo completado!',
+                'mensaje' => "Terminaste todas las lecciones de «{$leccion->modulo->titulo}». ¡Buen trabajo!",
+            ]);
+        }
+
+        return $redireccion;
     }
 
     /**
