@@ -25,6 +25,8 @@ export default {
                     complementario: '#4A6FA5',
                     profundo: '#1F2F4A',
                     'gris-claro': '#B3B3B3',
+                    // Derivado accesible del gris para texto pequeño (ver config/marca.php).
+                    'gris-texto': '#6E6E70',
                 },
             },
         },
