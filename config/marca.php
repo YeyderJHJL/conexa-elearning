@@ -16,6 +16,10 @@ return [
 
     'nombre' => 'Conexa Capital Central',
 
+    // Identificador de esta plataforma, para distinguirla de otras páginas de Conexa.
+    'nombre_corto' => 'Conexa',
+    'plataforma' => 'E-learning',
+
     /*
     | Archivos de public/images. "claro" es el logo con texto blanco, para fondos
     | oscuros (azul o negro); "oscuro" es el logo con texto azul, para fondos claros.

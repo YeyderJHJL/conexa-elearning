@@ -33,9 +33,9 @@ class AdminPanelProvider extends PanelProvider
                 'info' => config('marca.paletas.complementario'),
             ])
             ->font(config('marca.fuente'), provider: GoogleFontProvider::class)
-            ->brandName(config('marca.nombre'))
-            ->brandLogo(fn () => asset('images/'.rawurlencode(config('marca.logos.oscuro'))))
-            ->darkModeBrandLogo(fn () => asset('images/'.rawurlencode(config('marca.logos.claro'))))
+            ->brandName(config('marca.nombre_corto').' '.config('marca.plataforma'))
+            ->brandLogo(fn () => view('filament.marca', ['variante' => 'oscuro']))
+            ->darkModeBrandLogo(fn () => view('filament.marca', ['variante' => 'claro']))
             ->brandLogoHeight('2.5rem')
             ->favicon(fn () => asset('favicon.png'))
             ->theme(asset('build-admin/theme.css'))
@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Reportes')->collapsible()->collapsed(),
             ])
             ->renderHook(PanelsRenderHook::USER_MENU_BEFORE, fn () => view('filament.topbar-usuario'))
+            ->renderHook(PanelsRenderHook::HEAD_END, fn () => view('filament.titulo'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
