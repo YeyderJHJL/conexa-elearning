@@ -4,7 +4,7 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
             Mis áreas
         </h2>
     </x-slot>
@@ -13,9 +13,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @if ($areas->isEmpty())
                 <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-                    <i class="bi bi-journal-bookmark text-4xl text-blue-600" aria-hidden="true"></i>
-                    <h3 class="mt-3 text-lg font-semibold text-gray-900">Aún no tienes áreas asignadas</h3>
-                    <p class="mt-1 text-gray-600">
+                    <i class="bi bi-journal-bookmark text-4xl text-marca-azul" aria-hidden="true"></i>
+                    <h3 class="mt-3 text-lg font-semibold text-marca-azul">Aún no tienes áreas asignadas</h3>
+                    <p class="mt-1 text-marca-gris">
                         Cuando el administrador te asigne tus áreas de capacitación, aparecerán aquí.
                     </p>
                 </div>
@@ -23,15 +23,15 @@
                 <section class="mb-6 rounded-2xl bg-white p-5 shadow-sm border border-gray-100 sm:mb-8" aria-label="Avance global">
                     <div class="flex items-end justify-between gap-4">
                         <div>
-                            <p class="text-sm text-gray-500">Tu avance global</p>
-                            <p class="mt-1 text-3xl font-bold text-gray-900">{{ $progresoGlobal }}%</p>
+                            <p class="text-sm text-marca-gris">Tu avance global</p>
+                            <p class="mt-1 text-3xl font-bold text-marca-azul">{{ $progresoGlobal }}%</p>
                         </div>
-                        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-2xl text-blue-600">
+                        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-marca-azul/5 text-2xl text-marca-azul">
                             <i class="bi {{ $progresoGlobal >= 100 ? 'bi-trophy' : 'bi-graph-up-arrow' }}" aria-hidden="true"></i>
                         </span>
                     </div>
                     <div class="mt-4 h-2.5 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $progresoGlobal }}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="h-full rounded-full bg-blue-600" style="width: {{ $progresoGlobal }}%"></div>
+                        <div class="h-full rounded-full bg-marca-dorado" style="width: {{ $progresoGlobal }}%"></div>
                     </div>
                 </section>
 
@@ -42,13 +42,13 @@
                         $titulo = $esQuiz ? 'Rendir el quiz: '.$continuar['modulo']->quiz->titulo : $continuar['leccion']->titulo;
                         $moduloTitulo = $esQuiz ? $continuar['modulo']->titulo : $continuar['leccion']->modulo->titulo;
                     @endphp
-                    <a href="{{ $destino }}" class="mb-6 flex items-center justify-between gap-4 rounded-2xl bg-blue-600 p-5 text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:mb-8">
+                    <a href="{{ $destino }}" class="mb-6 flex items-center justify-between gap-4 rounded-2xl bg-marca-azul p-5 text-white shadow-sm transition hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2 sm:mb-8">
                         <div class="min-w-0">
-                            <p class="text-sm text-blue-100">Continuar donde quedaste</p>
+                            <p class="text-sm text-marca-gris-claro">Continuar donde quedaste</p>
                             <p class="mt-1 truncate font-semibold">{{ $titulo }}</p>
-                            <p class="truncate text-sm text-blue-100">{{ $moduloTitulo }}</p>
+                            <p class="truncate text-sm text-marca-gris-claro">{{ $moduloTitulo }}</p>
                         </div>
-                        <i class="bi {{ $esQuiz ? 'bi-patch-question-fill' : 'bi-play-circle-fill' }} shrink-0 text-4xl" aria-hidden="true"></i>
+                        <i class="bi {{ $esQuiz ? 'bi-patch-question-fill' : 'bi-play-circle-fill' }} shrink-0 text-4xl text-marca-dorado" aria-hidden="true"></i>
                     </a>
                 @endif
 
@@ -63,23 +63,23 @@
                             <div class="h-1 bg-[var(--acento)]"></div>
 
                             <div class="flex flex-1 flex-col p-5">
-                            <h3 class="text-lg font-semibold text-gray-900 leading-snug">{{ $area->nombre }}</h3>
+                            <h3 class="text-lg font-semibold text-marca-azul leading-snug">{{ $area->nombre }}</h3>
 
                             @if ($area->descripcion)
-                                <p class="mt-2 text-sm text-gray-600">{{ $area->descripcion }}</p>
+                                <p class="mt-2 text-sm text-marca-gris">{{ $area->descripcion }}</p>
                             @endif
 
                             @php $porcentaje = $progresoAreas[$area->id] ?? 0; @endphp
                             <div class="mt-auto pt-4">
-                                <div class="flex items-center justify-between text-sm text-gray-500">
+                                <div class="flex items-center justify-between text-sm text-marca-gris">
                                     <span>
                                         <i class="bi bi-collection" aria-hidden="true"></i>
                                         {{ trans_choice(':count módulo|:count módulos', $area->modulos_activos_count) }}
                                     </span>
-                                    <span class="font-semibold {{ $porcentaje >= 100 ? 'text-emerald-600' : 'text-[color:var(--acento)]' }}">{{ $porcentaje }}%</span>
+                                    <span class="font-semibold text-marca-azul">{{ $porcentaje }}%</span>
                                 </div>
                                 <div class="mt-2 h-2 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $porcentaje }}" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="h-full rounded-full {{ $porcentaje >= 100 ? 'bg-emerald-500' : 'bg-[var(--acento)]' }}" style="width: {{ $porcentaje }}%"></div>
+                                    <div class="h-full rounded-full bg-marca-dorado" style="width: {{ $porcentaje }}%"></div>
                                 </div>
                             </div>
                             </div>
