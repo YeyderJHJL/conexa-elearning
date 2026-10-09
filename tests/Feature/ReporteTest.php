@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\ReporteController;
 use App\Models\Area;
 use App\Models\IntentoQuiz;
 use App\Models\Leccion;
@@ -12,6 +13,7 @@ use App\Models\Quiz;
 use App\Models\User;
 use App\Services\ReporteService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class ReporteTest extends TestCase
@@ -81,17 +83,21 @@ class ReporteTest extends TestCase
         ]);
     }
 
-    public function test_guests_are_redirected_to_login(): void
+    public function test_workers_have_no_access_to_the_general_report(): void
     {
-        $this->get(route('reporte.descargar'))->assertRedirect('/login');
+        $this->modulo('Introduccion', 1);
+
+        $this->actingAs($this->trabajador)->get('/reporte')->assertNotFound();
+        $this->assertFalse(Route::has('reporte.descargar'));
     }
 
-    public function test_worker_downloads_a_pdf_with_a_descriptive_file_name(): void
+    public function test_reserved_controller_builds_the_pdf_of_the_given_worker(): void
     {
+        // El controlador no tiene ruta (se conectará en el panel de admin): se registra una solo para esta prueba.
+        Route::middleware('web')->get('/_prueba/reporte/{usuario}', ReporteController::class);
         $this->modulo('Introduccion', 2, 1, conQuiz: true);
 
-        $respuesta = $this->actingAs($this->trabajador)
-            ->get(route('reporte.descargar'))
+        $respuesta = $this->get("/_prueba/reporte/{$this->trabajador->id}")
             ->assertOk()
             ->assertHeader('content-type', 'application/pdf')
             ->assertDownload('reporte-capacitacion-ana-torres-'.now()->format('Ymd').'.pdf');
@@ -99,12 +105,12 @@ class ReporteTest extends TestCase
         $this->assertStringStartsWith('%PDF', $respuesta->getContent());
     }
 
-    public function test_worker_without_areas_still_gets_a_report(): void
+    public function test_reserved_controller_works_for_a_worker_without_areas(): void
     {
+        Route::middleware('web')->get('/_prueba/reporte/{usuario}', ReporteController::class);
         $sinAreas = User::factory()->create(['rol' => 'trabajador']);
 
-        $this->actingAs($sinAreas)
-            ->get(route('reporte.descargar'))
+        $this->get("/_prueba/reporte/{$sinAreas->id}")
             ->assertOk()
             ->assertHeader('content-type', 'application/pdf');
     }
@@ -261,13 +267,13 @@ class ReporteTest extends TestCase
         $this->assertStringContainsString('Queda 1 pendiente', $html);
     }
 
-    public function test_dashboard_offers_the_report_download(): void
+    public function test_dashboard_no_longer_offers_the_general_report(): void
     {
         $this->modulo('Intro', 1);
 
         $this->actingAs($this->trabajador)
             ->get('/dashboard')
-            ->assertSee('Descargar mi reporte')
-            ->assertSee(route('reporte.descargar'), false);
+            ->assertOk()
+            ->assertDontSee('Descargar mi reporte');
     }
 }
