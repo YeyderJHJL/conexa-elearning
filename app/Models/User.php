@@ -4,13 +4,13 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 
 #[Fillable(['name', 'email', 'password', 'rol', 'cargo', 'fecha_ingreso', 'activo', 'debe_cambiar_password'])]
 #[Hidden(['password', 'remember_token'])]
@@ -34,10 +34,25 @@ class User extends Authenticatable implements FilamentUser
             'fecha_ingreso' => 'date',
         ];
     }
+
     public function esAdmin(): bool
     {
         return $this->rol === 'admin';
     }
+
+    /**
+     * Nombre legible del rol para mostrar en el panel.
+     */
+    public function etiquetaRol(): string
+    {
+        return self::ETIQUETAS_ROL[$this->rol] ?? ucfirst((string) $this->rol);
+    }
+
+    /** @var array<string, string> */
+    public const ETIQUETAS_ROL = [
+        'admin' => 'Administrador',
+        'trabajador' => 'Trabajador',
+    ];
 
     public function areas()
     {
