@@ -26,7 +26,8 @@ class LeccionsTable
                     ->wrap()
                     ->searchable()
                     ->sortable(),
-                ColumnasComunes::tieneValor('url_video', 'Video', Heroicon::OutlinedVideoCamera),
+                ColumnasComunes::tieneValor('archivo_video', 'Video subido', Heroicon::OutlinedFilm),
+                ColumnasComunes::tieneValor('url_video', 'Video (enlace)', Heroicon::OutlinedVideoCamera),
                 ColumnasComunes::tieneValor('archivo_pdf', 'PDF', Heroicon::OutlinedDocumentText),
                 TextColumn::make('duracion_min')
                     ->label('Duración')

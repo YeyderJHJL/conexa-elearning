@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LeccionController extends Controller
@@ -74,6 +75,24 @@ class LeccionController extends Controller
         return $request->boolean('descargar')
             ? $disco->download($leccion->archivo_pdf, $nombre)
             : $disco->response($leccion->archivo_pdf, $nombre);
+    }
+
+    /**
+     * Sirve el video subido, solo a quien puede ver la lección. Usa BinaryFileResponse para que el
+     * navegador pueda adelantar y retroceder (peticiones HTTP Range).
+     */
+    public function video(Request $request, Leccion $leccion): BinaryFileResponse
+    {
+        $this->autorizarAcceso($request, $leccion);
+
+        $disco = Storage::disk(config('filament.default_filesystem_disk'));
+
+        abort_unless(filled($leccion->archivo_video) && $disco->exists($leccion->archivo_video), 404);
+
+        return response()->file($disco->path($leccion->archivo_video), [
+            'Content-Type' => $disco->mimeType($leccion->archivo_video) ?: 'video/mp4',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
     }
 
     /**

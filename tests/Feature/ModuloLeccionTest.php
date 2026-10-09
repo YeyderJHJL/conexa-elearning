@@ -112,7 +112,18 @@ class ModuloLeccionTest extends TestCase
             'youtube embed' => ['https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
             'drive view' => ['https://drive.google.com/file/d/1AbC_dEf-123/view?usp=sharing', 'https://drive.google.com/file/d/1AbC_dEf-123/preview'],
             'drive open' => ['https://drive.google.com/open?id=1AbC_dEf-123', 'https://drive.google.com/file/d/1AbC_dEf-123/preview'],
-            'otro sitio' => ['https://example.com/video.mp4', null],
+            'youtube sin esquema' => ['youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+            'youtu.be sin esquema' => ['youtu.be/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+            'youtube music' => ['https://music.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+            'youtube nocookie' => ['https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+            'youtube en vivo' => ['https://www.youtube.com/live/dQw4w9WgXcQ?si=x', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+            'youtube lista' => ['https://www.youtube.com/playlist?list=PLabcdefghijk123', 'https://www.youtube-nocookie.com/embed/videoseries?list=PLabcdefghijk123'],
+            'vimeo' => ['https://vimeo.com/123456789', 'https://player.vimeo.com/video/123456789'],
+            'vimeo privado' => ['https://vimeo.com/123456789/abcdef1234', 'https://player.vimeo.com/video/123456789?h=abcdef1234'],
+            'vimeo player' => ['https://player.vimeo.com/video/123456789?h=abcdef1234', 'https://player.vimeo.com/video/123456789?h=abcdef1234'],
+            'archivo directo no es embed' => ['https://example.com/video.mp4', null],
+            'otro sitio' => ['https://example.com/pagina', null],
+            'youtube sin id' => ['https://www.youtube.com/', null],
             'host engañoso' => ['https://youtube.com.evil.test/watch?v=dQw4w9WgXcQ', null],
             'esquema peligroso' => ['javascript:alert(1)', null],
             'sin url' => ['', null],
@@ -123,6 +134,21 @@ class ModuloLeccionTest extends TestCase
     public function test_video_url_is_converted_to_embed_format(string $url, ?string $esperada): void
     {
         $this->assertSame($esperada, (new Leccion(['url_video' => $url]))->video_embed_url);
+    }
+
+    public function test_direct_video_files_are_played_in_the_page_with_a_native_player(): void
+    {
+        $leccion = $this->leccion(['url_video' => 'cdn.example.com/clases/uno.mp4?v=2']);
+
+        $this->assertSame('https://cdn.example.com/clases/uno.mp4?v=2', $leccion->video_directo_url);
+        $this->assertNull((new Leccion(['url_video' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ']))->video_directo_url);
+
+        $this->actingAs($this->trabajador)
+            ->get(route('lecciones.show', $leccion))
+            ->assertOk()
+            ->assertSee('data-video-directo', false)
+            ->assertSee('src="https://cdn.example.com/clases/uno.mp4?v=2"', false)
+            ->assertDontSee('Ver el video de esta lección');
     }
 
     public function test_completing_a_lesson_saves_progress_and_goes_to_the_next_one(): void
