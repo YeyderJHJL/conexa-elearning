@@ -6,6 +6,6 @@ $classes = ($active ?? false)
             : 'block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-marca-gris-claro hover:text-white hover:bg-marca-profundo hover:border-marca-gris-claro focus:outline-none focus-visible:text-white focus-visible:bg-marca-profundo transition duration-150 ease-in-out';
 @endphp
 
-<a {{ $attributes->merge(['class' => $classes]) }}>
+<a {{ $attributes->merge(['class' => $classes]) }} @if ($active ?? false) aria-current="page" @endif>
     {{ $slot }}
 </a>

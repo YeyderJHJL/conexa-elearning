@@ -22,7 +22,7 @@
         'completado' => 'bg-marca-dorado text-marca-azul shadow-md',
         'actual' => 'bg-marca-azul text-white shadow-lg ring-4 ring-marca-dorado/50',
         'disponible' => 'bg-white text-marca-azul border-4 border-marca-azul shadow-sm',
-        default => 'bg-marca-gris-claro text-white',
+        default => 'bg-marca-gris-claro text-marca-profundo',
     };
 
     $tamano = match (true) {
@@ -42,7 +42,7 @@
 >
     <div class="flex h-20 w-20 items-center justify-center">
         @if ($nodo['url'])
-            <a href="{{ $nodo['url'] }}" aria-label="{{ $descripcion }}" class="relative flex {{ $tamano }} items-center justify-center rounded-full transition hover:scale-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-marca-dorado {{ $circulo }}">
+            <a href="{{ $nodo['url'] }}" aria-label="{{ $descripcion }}" class="relative flex {{ $tamano }} items-center justify-center rounded-full transition hover:scale-105 motion-reduce:transform-none motion-reduce:transition-none focus:outline-none focus-visible:ring-4 focus-visible:ring-marca-azul {{ $circulo }}">
         @else
             <span role="img" aria-label="{{ $descripcion }}" class="relative flex {{ $tamano }} cursor-not-allowed items-center justify-center rounded-full {{ $circulo }}">
         @endif
@@ -60,8 +60,8 @@
         @endif
     </div>
 
-    <p class="mt-1 w-full text-center text-xs font-semibold leading-tight {{ $estado === 'bloqueado' ? 'text-marca-gris' : 'text-marca-azul' }}">{{ $nodo['titulo'] }}</p>
-    <p class="text-[0.7rem] text-marca-gris">{{ $nodo['etiqueta'] }}</p>
+    <p class="mt-1 w-full text-center text-xs font-semibold leading-tight {{ $estado === 'bloqueado' ? 'text-marca-gris-texto' : 'text-marca-azul' }}">{{ $nodo['titulo'] }}</p>
+    <p class="text-[0.7rem] text-marca-gris-texto">{{ $nodo['etiqueta'] }}</p>
 
     @if ($estado === 'actual' && $nodo['url'])
         <a href="{{ $nodo['url'] }}" class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-marca-dorado px-4 py-1.5 text-sm font-semibold text-marca-azul shadow-sm hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-azul focus-visible:ring-offset-2">
