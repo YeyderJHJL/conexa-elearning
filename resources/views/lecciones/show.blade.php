@@ -24,6 +24,23 @@
                 </div>
             </header>
 
+            @if (filled($leccion->archivo_video))
+                {{-- Video subido desde el computador: se reproduce aquí mismo, con adelantar/retroceder. --}}
+                <div class="overflow-hidden rounded-2xl bg-marca-azul shadow-tarjeta-hover ring-1 ring-marca-azul/10" data-video-subido>
+                    <video
+                        controls
+                        playsinline
+                        preload="metadata"
+                        controlsList="nodownload"
+                        aria-label="{{ $leccion->titulo }}"
+                        class="aspect-video w-full bg-black"
+                        src="{{ route('lecciones.video', $leccion) }}"
+                    >
+                        Tu navegador no puede reproducir este video.
+                    </video>
+                </div>
+            @endif
+
             @if ($leccion->url_video)
                 @if ($leccion->video_embed_url)
                     <div class="aspect-video overflow-hidden rounded-2xl bg-marca-azul shadow-tarjeta-hover ring-1 ring-marca-azul/10">
@@ -35,6 +52,12 @@
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen
                             referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    </div>
+                @elseif ($leccion->video_directo_url)
+                    <div class="overflow-hidden rounded-2xl bg-marca-azul shadow-tarjeta-hover ring-1 ring-marca-azul/10" data-video-directo>
+                        <video controls playsinline preload="metadata" aria-label="{{ $leccion->titulo }}" class="aspect-video w-full bg-black" src="{{ $leccion->video_directo_url }}">
+                            Tu navegador no puede reproducir este video.
+                        </video>
                     </div>
                 @elseif ($enlaceVideo = \Illuminate\Support\Str::sanitizeUrl($leccion->url_video))
                     <a href="{{ $enlaceVideo }}" target="_blank" rel="noopener noreferrer" class="tarjeta tarjeta-elevable flex items-center gap-4 p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-azul focus-visible:ring-offset-2">
@@ -78,6 +101,7 @@
 
             @php
                 $sinContenido = blank($leccion->url_video)
+                    && blank($leccion->archivo_video)
                     && blank($leccion->archivo_pdf)
                     && trim(strip_tags((string) $leccion->contenido)) === ''
                     && ! str_contains((string) $leccion->contenido, '<img');

@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/lecciones/{leccion}', [LeccionController::class, 'show'])->name('lecciones.show');
     Route::post('/lecciones/{leccion}/completar', [LeccionController::class, 'completar'])->name('lecciones.completar');
     Route::get('/lecciones/{leccion}/pdf', [LeccionController::class, 'pdf'])->name('lecciones.pdf');
+    Route::get('/lecciones/{leccion}/video', [LeccionController::class, 'video'])->name('lecciones.video');
 });
 
 Route::get('/reportes/trabajadores/{usuario}', ReporteController::class)
