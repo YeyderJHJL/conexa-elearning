@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\ReporteController;
 use App\Models\Area;
 use App\Models\IntentoQuiz;
 use App\Models\Leccion;
@@ -91,13 +90,13 @@ class ReporteTest extends TestCase
         $this->assertFalse(Route::has('reporte.descargar'));
     }
 
-    public function test_reserved_controller_builds_the_pdf_of_the_given_worker(): void
+    public function test_admin_downloads_the_progress_pdf_of_any_worker(): void
     {
-        // El controlador no tiene ruta (se conectará en el panel de admin): se registra una solo para esta prueba.
-        Route::middleware('web')->get('/_prueba/reporte/{usuario}', ReporteController::class);
         $this->modulo('Introduccion', 2, 1, conQuiz: true);
+        $admin = User::factory()->create(['rol' => 'admin']);
 
-        $respuesta = $this->get("/_prueba/reporte/{$this->trabajador->id}")
+        $respuesta = $this->actingAs($admin)
+            ->get(route('reportes.trabajador', $this->trabajador))
             ->assertOk()
             ->assertHeader('content-type', 'application/pdf')
             ->assertDownload('reporte-capacitacion-ana-torres-'.now()->format('Ymd').'.pdf');
@@ -105,14 +104,33 @@ class ReporteTest extends TestCase
         $this->assertStringStartsWith('%PDF', $respuesta->getContent());
     }
 
-    public function test_reserved_controller_works_for_a_worker_without_areas(): void
+    public function test_admin_report_works_for_a_worker_without_areas(): void
     {
-        Route::middleware('web')->get('/_prueba/reporte/{usuario}', ReporteController::class);
         $sinAreas = User::factory()->create(['rol' => 'trabajador']);
+        $admin = User::factory()->create(['rol' => 'admin']);
 
-        $this->get("/_prueba/reporte/{$sinAreas->id}")
+        $this->actingAs($admin)
+            ->get(route('reportes.trabajador', $sinAreas))
             ->assertOk()
             ->assertHeader('content-type', 'application/pdf');
+    }
+
+    public function test_the_progress_pdf_is_forbidden_for_workers_and_guests(): void
+    {
+        $otro = User::factory()->create(['rol' => 'trabajador']);
+
+        $this->get(route('reportes.trabajador', $this->trabajador))->assertRedirect('/login');
+
+        $this->actingAs($this->trabajador);
+        $this->get(route('reportes.trabajador', $this->trabajador))->assertForbidden();
+        $this->get(route('reportes.trabajador', $otro))->assertForbidden();
+    }
+
+    public function test_the_progress_pdf_of_an_unknown_user_is_not_found(): void
+    {
+        $admin = User::factory()->create(['rol' => 'admin']);
+
+        $this->actingAs($admin)->get('/reportes/trabajadores/999999')->assertNotFound();
     }
 
     public function test_report_data_comes_from_the_database_only_for_assigned_active_areas(): void

@@ -10,10 +10,9 @@ use Illuminate\Http\Response;
 class ReporteController extends Controller
 {
     /**
-     * Reporte de avance general de un trabajador (PDF).
+     * Reporte de avance general de un trabajador (PDF), solo para administradores.
      *
-     * RESERVADO PARA EL PANEL DE ADMIN: no tiene ruta a propósito. Al conectarlo hay que
-     * protegerlo con el middleware `admin`, porque no comprueba permisos por sí mismo.
+     * No comprueba permisos por sí mismo: la ruta `reportes.trabajador` lo protege con el middleware `admin`.
      */
     public function __invoke(User $usuario, ReporteService $reporte): Response
     {
