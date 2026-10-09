@@ -4,7 +4,7 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight break-words">
             Encuesta de satisfacción
         </h2>
     </x-slot>
@@ -24,7 +24,7 @@
                 Volver a {{ $area->nombre }}
             </a>
 
-            <p class="mt-4 text-marca-gris">
+            <p class="mt-4 text-marca-gris-texto">
                 ¡Completaste <span class="font-semibold text-marca-azul">{{ $area->nombre }}</span>! Cuéntanos cómo te fue: son 3 preguntas rápidas y un comentario opcional.
             </p>
 
@@ -38,13 +38,13 @@
 
                         <div class="mt-3 grid grid-cols-5 gap-2">
                             @foreach (range(1, 5) as $nota)
-                                <label class="flex cursor-pointer items-center justify-center rounded-xl border border-gray-200 py-3 text-sm font-semibold text-gray-700 transition hover:border-marca-dorado has-[:checked]:border-marca-azul has-[:checked]:bg-marca-azul has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-marca-dorado has-[:focus-visible]:ring-offset-2">
+                                <label class="flex cursor-pointer items-center justify-center rounded-xl border border-gray-200 py-3 text-sm font-semibold text-gray-700 transition hover:border-marca-dorado has-[:checked]:border-marca-azul has-[:checked]:bg-marca-azul has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-marca-azul has-[:focus-visible]:ring-offset-2">
                                     <input type="radio" name="{{ $campo }}" value="{{ $nota }}" class="sr-only" @checked((string) old($campo) === (string) $nota) required>
                                     {{ $nota }}
                                 </label>
                             @endforeach
                         </div>
-                        <div class="mt-2 flex justify-between text-xs text-marca-gris">
+                        <div class="mt-2 flex justify-between text-xs text-marca-gris-texto">
                             <span>1 · {{ $minimo }}</span>
                             <span>5 · {{ $maximo }}</span>
                         </div>
@@ -56,14 +56,14 @@
                 @endforeach
 
                 <div class="rounded-2xl bg-white p-4 shadow-sm border border-gray-100 sm:p-5">
-                    <label for="comentario" class="font-semibold text-marca-azul">Comentario <span class="text-sm font-normal text-marca-gris">(opcional)</span></label>
-                    <textarea id="comentario" name="comentario" rows="4" maxlength="600" class="mt-3 block w-full rounded-xl border-gray-300 text-sm shadow-sm focus:border-marca-azul focus:ring-marca-dorado" placeholder="¿Qué mejorarías o qué te gustó más?">{{ old('comentario') }}</textarea>
+                    <label for="comentario" class="font-semibold text-marca-azul">Comentario <span class="text-sm font-normal text-marca-gris-texto">(opcional)</span></label>
+                    <textarea id="comentario" name="comentario" rows="4" maxlength="600" class="mt-3 block w-full rounded-xl border-gray-300 text-base shadow-sm placeholder:text-marca-gris-texto focus:border-marca-azul focus:ring-marca-azul sm:text-sm" placeholder="¿Qué mejorarías o qué te gustó más?">{{ old('comentario') }}</textarea>
                     @error('comentario')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2">
+                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2">
                     <i class="bi bi-send-check" aria-hidden="true"></i>
                     Enviar mi opinión
                 </button>
