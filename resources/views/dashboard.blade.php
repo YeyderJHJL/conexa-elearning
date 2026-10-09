@@ -33,10 +33,6 @@
                     <div class="mt-4 h-2.5 overflow-hidden rounded-full bg-gray-100" role="progressbar" aria-valuenow="{{ $progresoGlobal }}" aria-valuemin="0" aria-valuemax="100">
                         <div class="h-full rounded-full bg-blue-600" style="width: {{ $progresoGlobal }}%"></div>
                     </div>
-                    <a href="{{ route('reporte.descargar') }}" class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-blue-200 px-4 py-2.5 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:inline-flex sm:w-auto">
-                        <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
-                        Descargar mi reporte
-                    </a>
                 </section>
 
                 @if ($continuar)
