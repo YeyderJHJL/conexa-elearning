@@ -6,6 +6,7 @@ use App\Http\Controllers\LeccionController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\ReporteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +22,7 @@ Route::get('/areas/{area}', [AreaController::class, 'show'])
     ->name('areas.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/reporte', ReporteController::class)->name('reporte.descargar');
     Route::get('/modulos/{modulo}', [ModuloController::class, 'show'])->name('modulos.show');
     Route::get('/modulos/{modulo}/quiz', [QuizController::class, 'show'])->name('quiz.show');
     Route::post('/modulos/{modulo}/quiz', [QuizController::class, 'store'])->name('quiz.enviar');

@@ -120,6 +120,19 @@ class ProgresoService
     }
 
     /**
+     * Estado de los módulos activos de varias áreas con una sola consulta:
+     * id de área => (id de módulo => completado, en_curso o bloqueado).
+     *
+     * @param  Collection<int, Area>  $areas
+     * @return Collection<int, Collection<int, string>>
+     */
+    public function estadosDe(User $user, Collection $areas): Collection
+    {
+        return $this->evaluar($user, $areas->pluck('id')->all())
+            ->map(fn (Collection $filas) => $filas->mapWithKeys(fn (object $fila) => [(int) $fila->id => $fila->estado]));
+    }
+
+    /**
      * Si el usuario puede entrar al módulo: el primero del área siempre, y los demás
      * cuando el módulo anterior está completo (lecciones vistas y quiz aprobado).
      */
