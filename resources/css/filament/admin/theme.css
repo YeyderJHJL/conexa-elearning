@@ -1,0 +1,173 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import './iconos-grupos.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/*
+ * Tema del panel de Conexa Capital Central.
+ *
+ * Paleta oficial: azul #0E1A34, dorado #D7A743, gris #8C8C8E, azul complementario #4A6FA5.
+ * Los colores primario/secundario/info de Filament se definen en config/marca.php (paletas);
+ * aquí solo se ajusta el aspecto del lateral, la barra, las tarjetas y las tablas.
+ * Se compila con `npm run build:admin` (ver vite.admin.config.js) y no está dentro de @layer
+ * a propósito: así gana sobre los estilos base de Filament sin pelear por especificidad.
+ */
+
+:root {
+    --conexa-azul: #0E1A34;
+    --conexa-profundo: #1F2F4A;
+    --conexa-dorado: #D7A743;
+    --conexa-gris: #8C8C8E;
+    --conexa-gris-claro: #B3B3B3;
+    --conexa-complementario: #4A6FA5;
+    --conexa-gris-texto: #6E6E70;
+    --conexa-fondo: #F3F5F9;
+}
+
+/* ------------------------------------------------------------------ Fondo */
+
+html:not(.dark) .fi-body {
+    background-color: var(--conexa-fondo);
+}
+
+/* ---------------------------------------------------------- Barra superior */
+
+.fi-topbar {
+    border-bottom: 3px solid var(--conexa-dorado);
+}
+
+html:not(.dark) .fi-topbar {
+    box-shadow: 0 2px 12px rgb(14 26 52 / 0.06);
+}
+
+/* ----------------------------------------------------------------- Lateral */
+
+.fi-sidebar {
+    background-color: var(--conexa-azul);
+}
+
+.fi-sidebar-nav {
+    scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}
+
+.fi-sidebar-group-btn {
+    border-radius: 0.5rem;
+}
+
+.fi-sidebar-group-label {
+    color: var(--conexa-dorado);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.fi-sidebar .fi-icon-btn {
+    color: var(--conexa-gris-claro);
+}
+
+.fi-sidebar .fi-icon-btn:hover {
+    background-color: rgb(255 255 255 / 0.08);
+    color: #fff;
+}
+
+.fi-sidebar-item-btn {
+    color: var(--conexa-gris-claro);
+}
+
+.fi-sidebar-item-btn > .fi-icon {
+    color: var(--conexa-gris-claro);
+}
+
+.fi-sidebar-item-label {
+    color: #e5e7eb;
+    font-weight: 500;
+}
+
+.fi-sidebar-item-btn:hover {
+    background-color: rgb(255 255 255 / 0.08);
+}
+
+.fi-sidebar-item-btn:hover .fi-sidebar-item-label,
+.fi-sidebar-item-btn:hover > .fi-icon {
+    color: #fff;
+}
+
+.fi-sidebar-item-btn:focus-visible {
+    box-shadow: 0 0 0 2px var(--conexa-dorado);
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: rgb(215 167 67 / 0.16);
+    box-shadow: inset 3px 0 0 var(--conexa-dorado);
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-label {
+    color: #fff;
+    font-weight: 600;
+}
+
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
+    color: var(--conexa-dorado);
+}
+
+/* ------------------------------------------------------- Encabezado de página */
+
+.fi-header-heading {
+    color: var(--conexa-azul);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.dark .fi-header-heading {
+    color: #fff;
+}
+
+.fi-header-subheading {
+    color: var(--conexa-gris-texto);
+}
+
+/* ------------------------------------------------------- Tarjetas y widgets */
+
+.fi-wi-stats-overview-stat {
+    border-top: 3px solid var(--conexa-dorado);
+    border-radius: 0.85rem;
+}
+
+.fi-wi-stats-overview-stat-value {
+    font-weight: 700;
+}
+
+html:not(.dark) .fi-wi-stats-overview-stat-value {
+    color: var(--conexa-azul);
+}
+
+.fi-section,
+.fi-ta-ctn {
+    border-radius: 0.85rem;
+}
+
+/* ------------------------------------------------------------------ Tablas */
+
+html:not(.dark) .fi-ta-header-cell {
+    background-color: #eef1f7;
+    color: var(--conexa-azul);
+}
+
+.fi-ta-header-cell {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+html:not(.dark) .fi-ta-row:hover {
+    background-color: rgb(14 26 52 / 0.035);
+}
+
+/* ------------------------------------------------------------------- Login */
+
+.fi-simple-main {
+    border-top: 4px solid var(--conexa-dorado);
+}
