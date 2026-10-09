@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Area extends Model
 {
-    protected $fillable = ['nombre', 'slug', 'descripcion', 'icono', 'orden', 'activa'];
+    protected $fillable = ['nombre', 'slug', 'descripcion', 'icono', 'resumen_pdf', 'orden', 'activa'];
 
     public function modulos()
     {

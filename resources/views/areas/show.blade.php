@@ -98,6 +98,13 @@
                     @endforeach
                 </ol>
             @endif
+
+            @if ($puedeDescargarResumen)
+                <a href="{{ route('areas.resumen', $area) }}" class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-blue-200 bg-white px-5 py-3 font-semibold text-blue-700 shadow-sm hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
+                    Descargar resumen del área
+                </a>
+            @endif
         </div>
     </div>
 </x-app-layout>

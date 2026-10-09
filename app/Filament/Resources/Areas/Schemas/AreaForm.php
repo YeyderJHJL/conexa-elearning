@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Areas\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -18,6 +19,10 @@ class AreaForm
                     ->required(),
                 TextInput::make('descripcion'),
                 TextInput::make('icono'),
+                FileUpload::make('resumen_pdf')
+                    ->label('Resumen del área (PDF)')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->directory('resumenes'),
                 TextInput::make('orden')
                     ->required()
                     ->numeric()

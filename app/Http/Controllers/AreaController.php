@@ -29,6 +29,8 @@ class AreaController extends Controller
             'progresoModulos' => $progreso->porModulos($request->user(), $area),
             'estadosModulos' => $progreso->estados($request->user(), $area),
             'esAdmin' => $request->user()->esAdmin(),
+            'puedeDescargarResumen' => filled($area->resumen_pdf)
+                && ($request->user()->esAdmin() || $progreso->areaCompletada($request->user(), $area)),
         ]);
     }
 }
