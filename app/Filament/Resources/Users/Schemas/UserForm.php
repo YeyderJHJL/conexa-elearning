@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -25,7 +25,7 @@ class UserForm
                     ->unique(ignoreRecord: true),
 
                 Select::make('rol')
-                    ->options(['admin' => 'Administrador', 'trabajador' => 'Trabajador'])
+                    ->options(User::ETIQUETAS_ROL)
                     ->default('trabajador')
                     ->required(),
 
