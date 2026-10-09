@@ -23,6 +23,55 @@
     --conexa-complementario: #4A6FA5;
     --conexa-gris-texto: #6E6E70;
     --conexa-fondo: #F3F5F9;
+
+    /* Cabecera de TODAS las tablas: cambia estos dos valores y se refleja en cada tabla del panel. */
+    --conexa-table-head: #0E1A34;
+    --conexa-table-head-text: #ffffff;
+}
+
+/* ------------------------------------------------------ Cabecera de tablas */
+
+.fi-ta-table > thead > tr,
+.fi-ta-table > thead > tr.fi-ta-table-head-groups-row {
+    background-color: var(--conexa-table-head);
+}
+
+/* Tablas dentro de formularios (repeaters) y de infolists: misma cabecera que el resto. */
+.fi-fo-table-repeater > table > thead > tr > th,
+.fi-in-table-repeatable > table > thead > tr > th {
+    background-color: var(--conexa-table-head);
+    color: var(--conexa-table-head-text);
+}
+
+.fi-ta-table > thead > tr + tr {
+    border-color: rgb(255 255 255 / 0.12);
+}
+
+.fi-ta-table > thead > tr > th,
+.fi-ta-table > thead > tr > td,
+.fi-ta-header-cell,
+.fi-ta-header-group-cell,
+.fi-ta-table-stacked-header-cell {
+    color: var(--conexa-table-head-text);
+}
+
+/* Íconos de ordenar: claros sobre fondo oscuro; dorado en la columna ordenada. */
+.fi-ta-header-cell:not(.fi-ta-header-cell-sorted) .fi-icon,
+.fi-ta-header-cell .fi-loading-indicator {
+    color: var(--conexa-gris-claro);
+}
+
+.fi-ta-header-cell:not(.fi-ta-header-cell-sorted) .fi-ta-header-cell-sort-btn:hover .fi-icon,
+.fi-ta-header-cell:not(.fi-ta-header-cell-sorted) .fi-ta-header-cell-sort-btn:focus-visible .fi-icon {
+    color: var(--conexa-table-head-text);
+}
+
+.fi-ta-header-cell.fi-ta-header-cell-sorted .fi-icon {
+    color: var(--conexa-dorado);
+}
+
+.fi-ta-header-cell .fi-ta-header-cell-sort-btn:focus-visible {
+    box-shadow: 0 0 0 2px var(--conexa-dorado);
 }
 
 /* ------------------------------------------------------------------ Fondo */
@@ -149,11 +198,6 @@ html:not(.dark) .fi-wi-stats-overview-stat-value {
 }
 
 /* ------------------------------------------------------------------ Tablas */
-
-html:not(.dark) .fi-ta-header-cell {
-    background-color: #eef1f7;
-    color: var(--conexa-azul);
-}
 
 .fi-ta-header-cell {
     font-size: 0.72rem;

@@ -191,4 +191,57 @@
             display: none;
         }
     }
+
+    /*
+     * Fondo oscuro opcional (botón de usuario > Fondo). Solo reasigna superficies claras y textos;
+     * la barra, los héroes y los botones azules/dorados ya son oscuros o de marca y no se tocan.
+     */
+    html.dark {
+        color-scheme: dark;
+    }
+
+    .dark .bg-marca-fondo { background-color: #0A1226; }
+    .dark .bg-white { background-color: #131F3A; }
+    .dark .bg-white\/50 { background-color: rgb(19 31 58 / 0.5); }
+
+    .dark .tarjeta { border-color: rgb(255 255 255 / 0.08); box-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.55); }
+
+    .dark .text-marca-azul,
+    .dark .text-gray-950,
+    .dark .text-gray-900,
+    .dark .text-gray-800 { color: #E8EDF7; }
+    .dark .text-gray-700,
+    .dark .text-gray-600 { color: #C3CCDD; }
+    .dark .text-marca-gris-texto { color: #A9B3C6; }
+
+    /* Lo que va sobre dorado conserva el azul oscuro. */
+    .dark .bg-marca-dorado.text-marca-azul,
+    .dark .bg-marca-dorado .text-marca-azul,
+    .dark .btn-dorado { color: #0E1A34; }
+
+    .dark .bg-gray-100 { background-color: #1C2A4A; }
+    .dark .border-gray-100,
+    .dark .border-gray-200,
+    .dark .border-marca-azul\/10,
+    .dark .border-marca-azul\/20 { border-color: rgb(255 255 255 / 0.12); }
+
+    /* Pistas de las barras de progreso y fondos suaves translúcidos. */
+    .dark .bg-marca-azul\/10 { background-color: rgb(255 255 255 / 0.12); }
+    .dark .bg-marca-azul\/5 { background-color: rgb(255 255 255 / 0.06); }
+
+    .dark .hover\:bg-marca-azul\/5:hover { background-color: rgb(255 255 255 / 0.08); }
+    .dark .hover\:text-marca-azul:hover { color: #FFFFFF; }
+
+    .dark .btn-contorno { background-color: transparent; border-color: rgb(255 255 255 / 0.25); color: #E8EDF7; }
+    .dark .btn-azul { background-color: #2A4170; }
+    .dark .btn-azul:hover { background-color: #36528D; }
+
+    .dark input:not([type=radio]):not([type=checkbox]),
+    .dark textarea,
+    .dark select { background-color: #0D1830; border-color: rgb(255 255 255 / 0.2); color: #F3F6FB; }
+
+    .dark .contenido-rico { color: #D8DFEC; }
+    .dark .contenido-rico h1,
+    .dark .contenido-rico h2,
+    .dark .contenido-rico h3 { color: #FFFFFF; }
 }
