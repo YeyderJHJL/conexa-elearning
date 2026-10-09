@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Identidad de Conexa Capital Central.
+ * Los mismos colores están en tailwind.config.js (clases `marca-*`) y en config/marca.php.
+ */
+@layer base {
+    :root {
+        --marca-azul: #0E1A34;
+        --marca-dorado: #D7A743;
+        --marca-gris: #8C8C8E;
+        --marca-complementario: #4A6FA5;
+        --marca-profundo: #1F2F4A;
+        --marca-gris-claro: #B3B3B3;
+    }
+
+    body {
+        @apply font-normal;
+    }
+
+    h1, h2, h3, h4 {
+        @apply font-semibold;
+    }
+}
+
 @layer components {
     .contenido-rico {
         @apply text-gray-800 leading-relaxed break-words;
@@ -12,15 +35,15 @@
     }
 
     .contenido-rico h1 {
-        @apply text-2xl font-bold text-gray-900;
+        @apply text-2xl font-bold text-marca-azul;
     }
 
     .contenido-rico h2 {
-        @apply text-xl font-semibold text-gray-900;
+        @apply text-xl font-semibold text-marca-azul;
     }
 
     .contenido-rico h3 {
-        @apply text-lg font-semibold text-gray-900;
+        @apply text-lg font-semibold text-marca-azul;
     }
 
     .contenido-rico ul {
@@ -32,11 +55,11 @@
     }
 
     .contenido-rico a {
-        @apply text-blue-600 underline hover:text-blue-700;
+        @apply text-marca-azul underline decoration-marca-dorado decoration-2 underline-offset-2 hover:text-marca-profundo;
     }
 
     .contenido-rico blockquote {
-        @apply border-l-4 border-blue-200 pl-4 italic text-gray-600;
+        @apply border-l-4 border-marca-dorado pl-4 italic text-marca-gris;
     }
 
     .contenido-rico img {
@@ -44,6 +67,6 @@
     }
 
     .contenido-rico pre {
-        @apply overflow-x-auto rounded-xl bg-gray-900 p-4 text-sm text-gray-100;
+        @apply overflow-x-auto rounded-xl bg-marca-azul p-4 text-sm text-gray-100;
     }
 }
