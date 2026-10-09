@@ -210,8 +210,7 @@ class IdentidadMarcaTest extends TestCase
     public function test_worker_views_no_longer_use_the_old_blue_or_indigo_palette(): void
     {
         $archivos = collect(File::allFiles(resource_path('views')))
-            ->reject(fn ($archivo) => in_array($archivo->getFilename(), ['welcome.blade.php'], true)
-                || str_contains($archivo->getPathname(), DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR)
+            ->reject(fn ($archivo) => str_contains($archivo->getPathname(), DIRECTORY_SEPARATOR.'pdf'.DIRECTORY_SEPARATOR)
                 || str_contains($archivo->getPathname(), DIRECTORY_SEPARATOR.'filament'.DIRECTORY_SEPARATOR));
 
         $this->assertNotEmpty($archivos);

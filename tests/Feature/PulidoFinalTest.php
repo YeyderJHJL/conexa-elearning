@@ -363,7 +363,7 @@ class PulidoFinalTest extends TestCase
         foreach (File::allFiles(resource_path('views')) as $archivo) {
             $ruta = str_replace(DIRECTORY_SEPARATOR, '/', $archivo->getRelativePathname());
 
-            if (in_array($ruta, ['welcome.blade.php'], true) || str_starts_with($ruta, 'pdf/') || str_starts_with($ruta, 'filament/')) {
+            if (str_starts_with($ruta, 'pdf/') || str_starts_with($ruta, 'filament/')) {
                 continue;
             }
 
@@ -379,7 +379,7 @@ class PulidoFinalTest extends TestCase
 
     public function test_small_text_uses_the_accessible_gray_and_focus_rings_are_dark_on_light_backgrounds(): void
     {
-        $excluidos = ['welcome.blade.php', 'layouts/navigation.blade.php', 'components/nav-link.blade.php', 'components/responsive-nav-link.blade.php', 'components/celebracion.blade.php', 'layouts/guest.blade.php'];
+        $excluidos = ['layouts/navigation.blade.php', 'components/celebracion.blade.php', 'layouts/guest.blade.php'];
 
         foreach (File::allFiles(resource_path('views')) as $archivo) {
             $ruta = str_replace(DIRECTORY_SEPARATOR, '/', $archivo->getRelativePathname());
