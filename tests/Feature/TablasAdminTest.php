@@ -276,4 +276,36 @@ class TablasAdminTest extends TestCase
                 ->assertTableBulkActionExists('delete');
         }
     }
+
+    public function test_theme_defines_a_single_variable_for_every_table_header(): void
+    {
+        $css = file_get_contents(resource_path('css/filament/admin/theme.css'));
+
+        $this->assertSame(1, preg_match_all('/--conexa-table-head:\s*#0E1A34;/i', $css), 'La variable se define una sola vez, en :root.');
+        $this->assertStringContainsString('.fi-ta-table > thead > tr', $css);
+        $this->assertStringContainsString('background-color: var(--conexa-table-head);', $css);
+        $this->assertSame(0, preg_match('/thead[^{]*\{[^}]*background-color:\s*#/i', $css), 'La cabecera no debe llevar colores sueltos.');
+
+        $luminancia = fn (string $hex) => array_sum(array_map(
+            fn ($c, $peso) => $peso * ((($v = hexdec($c) / 255) <= 0.03928) ? $v / 12.92 : ((($v + 0.055) / 1.055) ** 2.4)),
+            str_split(ltrim($hex, '#'), 2),
+            [0.2126, 0.7152, 0.0722],
+        ));
+        $claro = max($luminancia('#ffffff'), $luminancia('#0E1A34'));
+        $oscuro = min($luminancia('#ffffff'), $luminancia('#0E1A34'));
+        $this->assertGreaterThanOrEqual(4.5, ($claro + 0.05) / ($oscuro + 0.05), 'Texto de cabecera ilegible.');
+    }
+
+    public function test_no_other_rule_paints_a_header_cell_background(): void
+    {
+        $css = file_get_contents(resource_path('css/filament/admin/theme.css'));
+
+        preg_match_all('/([^{}]*header-cell[^{}]*)\{([^{}]*)\}/', $css, $reglas, PREG_SET_ORDER);
+
+        foreach ($reglas as [$todo, $selector, $cuerpo]) {
+            $this->assertDoesNotMatchRegularExpression('/background(-color)?\s*:/', $cuerpo, 'Una regla pinta la celda de cabecera y tapa el color estándar: '.trim($selector));
+        }
+
+        $this->assertStringNotContainsString('#eef1f7', $css);
+    }
 }

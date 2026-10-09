@@ -294,7 +294,7 @@ class PulidoFinalTest extends TestCase
         $dashboard = $this->get('/dashboard')->assertOk()->getContent();
         $xpath = $this->dom($dashboard);
 
-        $this->assertSame(2, $xpath->query('//a[@aria-current="page"]')->length, 'Enlace de escritorio y del menú móvil.');
+        $this->assertSame(0, $xpath->query('//a[@aria-current="page"]')->length, 'En el inicio no hay áreas activas que marcar.');
         $this->assertStringNotContainsString('($active', $dashboard);
 
         $perfil = $this->get(route('profile.edit'))->assertOk()->getContent();
@@ -357,7 +357,7 @@ class PulidoFinalTest extends TestCase
 
     public function test_gold_is_never_used_as_text_color_on_light_backgrounds(): void
     {
-        $permitidos = ['areas/show.blade.php', 'components/ruta-nodo.blade.php', 'dashboard.blade.php', 'lecciones/show.blade.php', 'modulos/show.blade.php'];
+        $permitidos = ['areas/show.blade.php', 'components/ruta-nodo.blade.php', 'dashboard.blade.php', 'layouts/guest.blade.php', 'layouts/navigation.blade.php', 'lecciones/show.blade.php', 'modulos/show.blade.php'];
         $encontrados = [];
 
         foreach (File::allFiles(resource_path('views')) as $archivo) {

@@ -87,6 +87,29 @@ class DisenoTrabajadorTest extends TestCase
         $this->actingAs($admin)->get(route('profile.edit'))->assertOk()->assertSee('Administrador');
     }
 
+    public function test_top_bar_is_simple_with_only_background_profile_and_logout_in_the_user_menu(): void
+    {
+        $trabajador = User::factory()->create(['rol' => 'trabajador', 'name' => 'Ana Pérez']);
+        $otraArea = Area::create(['nombre' => 'Contabilidad secreta', 'slug' => 'contabilidad']);
+
+        $html = $this->actingAs($trabajador)->get('/dashboard')->assertOk()->getContent();
+        $xpath = $this->dom($html);
+
+        $this->assertSame(0, $xpath->query('//aside')->length, 'No hay menú lateral.');
+        $this->assertSame(0, $xpath->query('//nav//a[@href="'.route('dashboard').'"][not(.//img)]')->length, 'La barra solo tiene el logo como enlace al inicio.');
+        $this->assertSame(0, $xpath->query('//nav//button[@aria-label="Menú"]')->length, 'No hay hamburguesa.');
+
+        $menu = $xpath->query('//nav//*[@data-menu-cuenta]')->item(0);
+        $this->assertNotNull($menu);
+        $this->assertSame(1, $xpath->query('//*[@data-menu-cuenta]//*[@data-selector-fondo]')->length);
+        $this->assertSame(2, $xpath->query('//*[@data-selector-fondo]//button')->length, 'Claro y oscuro.');
+        $this->assertSame(1, $xpath->query('//*[@data-menu-cuenta]//a[@href="'.route('profile.edit').'"]')->length);
+        $this->assertSame(1, $xpath->query('//*[@data-menu-cuenta]//form[@action="'.route('logout').'"]')->length);
+        $this->assertStringNotContainsString('Contabilidad secreta', $menu->textContent);
+
+        $this->assertStringContainsString("localStorage.getItem('tema') === 'oscuro'", $html, 'El fondo elegido se aplica antes de pintar.');
+    }
+
     public function test_progress_ring_clamps_values_and_is_accessible(): void
     {
         $html = $this->renderizar('<x-anillo-progreso :valor="250" etiqueta="Avance X" />');
@@ -130,5 +153,21 @@ class DisenoTrabajadorTest extends TestCase
     private function renderizar(string $plantilla): string
     {
         return Blade::render($plantilla);
+    }
+
+    public function test_platform_identifier_and_titles_follow_conexa_e_learning(): void
+    {
+        $trabajador = User::factory()->create(['rol' => 'trabajador']);
+        $area = Area::create(['nombre' => 'Ventas', 'slug' => 'ventas']);
+        $trabajador->areas()->attach($area);
+
+        $xpath = $this->dom($this->actingAs($trabajador)->get('/dashboard')->assertOk()->getContent());
+        $this->assertStringContainsString('E-learning', $xpath->query('//nav//*[@data-plataforma]')->item(0)->textContent);
+
+        $this->get(route('areas.show', $area))->assertSee('<title>Conexa E-learning — Ventas</title>', false);
+        $this->get(route('profile.edit'))->assertSee('<title>Conexa E-learning — Mi perfil</title>', false);
+
+        auth()->logout();
+        $this->get('/login')->assertSee('<title>Conexa E-learning — Iniciar sesión</title>', false)->assertSee('data-plataforma', false);
     }
 }

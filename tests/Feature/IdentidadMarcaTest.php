@@ -92,9 +92,18 @@ class IdentidadMarcaTest extends TestCase
 
         $this->assertSame('Montserrat', $panel->getFontFamily());
         $this->assertSame(GoogleFontProvider::class, $panel->getFontProvider());
-        $this->assertSame('Conexa Capital Central', (string) $panel->getBrandName());
-        $this->assertStringEndsWith('/images/'.self::LOGO_OSCURO, $panel->getBrandLogo());
-        $this->assertStringEndsWith('/images/'.self::LOGO_CLARO, $panel->getDarkModeBrandLogo());
+        $this->assertSame('Conexa E-learning', (string) $panel->getBrandName());
+
+        // El logo lleva el identificador de la plataforma: texto dorado, sin fondo, en ambos modos.
+        $claro = (string) $panel->getBrandLogo()->toHtml();
+        $this->assertStringContainsString('/images/'.self::LOGO_OSCURO, $claro);
+        $this->assertStringContainsString('E-learning', $claro);
+        $this->assertStringContainsString('color: #D7A743', $claro);
+        $this->assertStringNotContainsString('background-color: #D7A743', $claro);
+
+        $oscuro = (string) $panel->getDarkModeBrandLogo()->toHtml();
+        $this->assertStringContainsString('/images/'.self::LOGO_CLARO, $oscuro);
+        $this->assertStringContainsString('color: #D7A743', $oscuro);
         $this->assertSame('2.5rem', $panel->getBrandLogoHeight());
         $this->assertStringEndsWith('/favicon.png', $panel->getFavicon());
     }
@@ -157,7 +166,7 @@ class IdentidadMarcaTest extends TestCase
             ->assertSee('favicon.ico', false)
             ->assertSee('favicon.png', false)
             ->assertSee('apple-touch-icon.png', false)
-            ->assertSee('<title>Conexa Capital Central</title>', false)
+            ->assertSee('<title>Conexa E-learning — Inicio</title>', false)
             ->assertSee('content="#0E1A34"', false)
             ->assertSee('bg-marca-azul', false)
             ->assertSee('images/'.self::LOGO_CLARO, false)
@@ -214,5 +223,19 @@ class IdentidadMarcaTest extends TestCase
                 "{$archivo->getRelativePathname()} todavía usa clases blue/indigo"
             );
         }
+    }
+
+    public function test_admin_pages_carry_the_platform_identifier_and_the_reordered_title(): void
+    {
+        $login = $this->get('/admin/login')->assertOk()->getContent();
+        $this->assertStringContainsString('data-marca-plataforma', $login);
+        $this->assertStringContainsString('data-titulo-panel', $login);
+
+        $this->actingAs(User::factory()->create(['rol' => 'admin']));
+        $panel = $this->get('/admin')->assertOk()->getContent();
+
+        $this->assertStringContainsString('data-marca-plataforma', $panel);
+        $this->assertStringContainsString('E-learning', $panel);
+        $this->assertMatchesRegularExpression('/const marca = .{0,3}Conexa E-learning/', $panel);
     }
 }
