@@ -12,7 +12,20 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Montserrat', ...defaultTheme.fontFamily.sans],
+            },
+
+            // Paleta oficial de Conexa Capital Central (clases `bg-marca-azul`, `text-marca-dorado`, etc.).
+            // Debe coincidir con config/marca.php y con las variables CSS de resources/css/app.css.
+            colors: {
+                marca: {
+                    azul: '#0E1A34',
+                    dorado: '#D7A743',
+                    gris: '#8C8C8E',
+                    complementario: '#4A6FA5',
+                    profundo: '#1F2F4A',
+                    'gris-claro': '#B3B3B3',
+                },
             },
         },
     },
