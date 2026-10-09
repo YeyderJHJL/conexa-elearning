@@ -20,6 +20,13 @@ class ModuloForm
                 TextInput::make('titulo')
                     ->required(),
                 TextInput::make('descripcion'),
+                FileUpload::make('imagen')
+                    ->label('Imagen del módulo')
+                    ->image()
+                    ->disk('public')
+                    ->visibility('public')
+                    ->directory('modulos')
+                    ->helperText('Opcional. Se muestra en la fila del módulo dentro del área.'),
                 FileUpload::make('resumen_pdf')
                     ->label('Resumen del módulo (PDF)')
                     ->acceptedFileTypes(['application/pdf'])

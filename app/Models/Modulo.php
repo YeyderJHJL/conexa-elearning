@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\TieneImagen;
 use Illuminate\Database\Eloquent\Model;
 
 class Modulo extends Model
 {
-    protected $fillable = ['area_id', 'titulo', 'descripcion', 'resumen_pdf', 'orden', 'activo'];
+    use TieneImagen;
+
+    protected $fillable = ['area_id', 'titulo', 'descripcion', 'imagen', 'resumen_pdf', 'orden', 'activo'];
 
     public function area()
     {
