@@ -4,7 +4,7 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight break-words">
             {{ $modulo->titulo }}
         </h2>
     </x-slot>
@@ -24,39 +24,41 @@
             @endif
 
             @if ($modulo->descripcion)
-                <p class="mt-4 text-marca-gris">{{ $modulo->descripcion }}</p>
+                <p class="mt-4 text-marca-gris-texto">{{ $modulo->descripcion }}</p>
             @endif
 
             @if ($lecciones->isEmpty())
                 <div class="mt-6 bg-white rounded-2xl shadow-sm p-8 text-center">
                     <i class="bi bi-journal-text text-4xl text-marca-azul" aria-hidden="true"></i>
                     <h3 class="mt-3 text-lg font-semibold text-marca-azul">Este módulo aún no tiene lecciones</h3>
-                    <p class="mt-1 text-marca-gris">Vuelve pronto: el contenido se publicará aquí.</p>
+                    <p class="mt-1 text-marca-gris-texto">Vuelve pronto: el contenido se publicará aquí.</p>
                 </div>
             @else
                 <ol class="mt-6 space-y-3">
                     @foreach ($lecciones as $leccion)
                         @php $completada = $completadas->contains($leccion->id); @endphp
                         <li>
-                            <a href="{{ route('lecciones.show', $leccion) }}" class="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 transition hover:border-marca-dorado hover:shadow-md focus:outline-none focus:ring-2 focus:ring-marca-dorado">
+                            <a href="{{ route('lecciones.show', $leccion) }}" class="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 transition hover:border-marca-dorado hover:shadow-md focus:outline-none focus:ring-2 focus:ring-marca-azul">
                                 <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-marca-azul/5 text-marca-azul font-semibold">
                                     {{ $loop->iteration }}
                                 </span>
 
                                 <div class="min-w-0 flex-1">
-                                    <h3 class="text-base font-semibold text-marca-azul leading-snug">{{ $leccion->titulo }}</h3>
+                                    <h3 class="text-base font-semibold text-marca-azul leading-snug break-words">{{ $leccion->titulo }}</h3>
                                     @if ($leccion->duracion_min)
-                                        <p class="mt-1 text-sm text-marca-gris">
+                                        <p class="mt-1 text-sm text-marca-gris-texto">
                                             <i class="bi bi-clock" aria-hidden="true"></i> {{ $leccion->duracion_min }} min
                                         </p>
                                     @endif
                                 </div>
 
                                 @if ($completada)
-                                    <i class="bi bi-check-circle-fill text-2xl text-marca-dorado" title="Completada" aria-hidden="true"></i>
+                                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-marca-dorado text-marca-azul" title="Completada">
+                                        <i class="bi bi-check-lg text-lg" aria-hidden="true"></i>
+                                    </span>
                                     <span class="sr-only">Completada</span>
                                 @else
-                                    <i class="bi bi-circle text-2xl text-gray-300" title="Pendiente" aria-hidden="true"></i>
+                                    <i class="bi bi-circle text-2xl text-marca-gris-texto" title="Pendiente" aria-hidden="true"></i>
                                     <span class="sr-only">Pendiente</span>
                                 @endif
                             </a>
@@ -79,7 +81,7 @@
                     <div class="flex flex-wrap items-start justify-between gap-2">
                         <div class="min-w-0">
                             <h3 class="font-semibold text-marca-azul">{{ $quiz->titulo }}</h3>
-                            <p class="mt-1 text-sm text-marca-gris">
+                            <p class="mt-1 text-sm text-marca-gris-texto">
                                 {{ trans_choice(':count pregunta|:count preguntas', $quiz->preguntas_count) }} · Nota mínima: {{ $notaMinima }}%
                             </p>
                         </div>
@@ -112,16 +114,16 @@
 
                     <div class="mt-4">
                         @if ($leccionesCompletas)
-                            <a href="{{ route('quiz.show', $modulo) }}" class="flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2 {{ $estado === 'aprobado' ? 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' : 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' }}">
+                            <a href="{{ route('quiz.show', $modulo) }}" class="flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2 {{ $estado === 'aprobado' ? 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' : 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' }}">
                                 <i class="bi {{ $estado === 'no_rendido' ? 'bi-patch-question' : 'bi-arrow-repeat' }}" aria-hidden="true"></i>
                                 {{ $etiquetaBoton }}
                             </a>
                         @else
-                            <span aria-disabled="true" class="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-gray-100 px-5 py-3 font-semibold text-marca-gris">
+                            <span aria-disabled="true" class="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-gray-100 px-5 py-3 font-semibold text-marca-gris-texto">
                                 <i class="bi bi-lock-fill" aria-hidden="true"></i>
                                 {{ $etiquetaBoton }}
                             </span>
-                            <p class="mt-2 text-center text-sm text-marca-gris">Completa todas las lecciones para desbloquear el quiz.</p>
+                            <p class="mt-2 text-center text-sm text-marca-gris-texto">Completa todas las lecciones para desbloquear el quiz.</p>
                         @endif
 
                         @if ($intentoResultado)
@@ -135,7 +137,7 @@
             @endif
 
             @if ($puedeDescargarResumen)
-                <a href="{{ route('modulos.resumen', $modulo) }}" class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-marca-azul/20 bg-white px-5 py-3 font-semibold text-marca-azul shadow-sm hover:bg-marca-azul/5 focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2">
+                <a href="{{ route('modulos.resumen', $modulo) }}" class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-marca-azul/20 bg-white px-5 py-3 font-semibold text-marca-azul shadow-sm hover:bg-marca-azul/5 focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2">
                     <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
                     Descargar resumen del módulo
                 </a>

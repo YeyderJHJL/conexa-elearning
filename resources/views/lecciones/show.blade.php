@@ -4,7 +4,7 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight break-words">
             {{ $leccion->titulo }}
         </h2>
     </x-slot>
@@ -52,7 +52,7 @@
                         </span>
                         <div>
                             <h3 class="font-semibold text-marca-azul">Material en PDF</h3>
-                            <p class="text-sm text-marca-gris">Documento adjunto a esta lección</p>
+                            <p class="text-sm text-marca-gris-texto">Documento adjunto a esta lección</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
@@ -66,9 +66,24 @@
                 </section>
             @endif
 
+            @php
+                $sinContenido = blank($leccion->url_video)
+                    && blank($leccion->archivo_pdf)
+                    && trim(strip_tags((string) $leccion->contenido)) === ''
+                    && ! str_contains((string) $leccion->contenido, '<img');
+            @endphp
+
+            @if ($sinContenido)
+                <div class="rounded-2xl bg-white p-8 text-center shadow-sm border border-gray-100">
+                    <i class="bi bi-hourglass-split text-4xl text-marca-azul" aria-hidden="true"></i>
+                    <h3 class="mt-3 text-lg font-semibold text-marca-azul">El contenido de esta lección llegará pronto</h3>
+                    <p class="mt-1 text-marca-gris-texto">Todavía no hay texto, video ni material para mostrar aquí. Vuelve más tarde o continúa con las demás lecciones.</p>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('lecciones.completar', $leccion) }}">
                 @csrf
-                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2">
+                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2">
                     <i class="bi bi-check2-circle" aria-hidden="true"></i>
                     @if ($completada)
                         Completada · {{ $siguiente ? 'continuar' : 'volver al módulo' }}
@@ -82,7 +97,7 @@
                 @if ($anterior)
                     <a href="{{ route('lecciones.show', $anterior) }}" class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-marca-dorado">
                         <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                        <span class="truncate">{{ $anterior->titulo }}</span>
+                        <span class="truncate" title="{{ $anterior->titulo }}">{{ $anterior->titulo }}</span>
                     </a>
                 @else
                     <span></span>
@@ -90,7 +105,7 @@
 
                 @if ($siguiente)
                     <a href="{{ route('lecciones.show', $siguiente) }}" class="flex items-center justify-end gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-marca-dorado">
-                        <span class="truncate">{{ $siguiente->titulo }}</span>
+                        <span class="truncate" title="{{ $siguiente->titulo }}">{{ $siguiente->titulo }}</span>
                         <i class="bi bi-chevron-right" aria-hidden="true"></i>
                     </a>
                 @endif
