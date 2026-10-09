@@ -6,12 +6,17 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="theme-color" content="{{ config('marca.colores.azul') }}">
 
-        <title>{{ config('marca.nombre') }}</title>
+        <title>{{ config('marca.nombre_corto') }} {{ config('marca.plataforma') }}@if (filled($seccion = $attributes->get('titulo'))) — {{ $seccion }}@endif</title>
 
         <!-- Favicon -->
         <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
         <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
         <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
+        <!-- Fondo claro/oscuro elegido por la persona (se aplica antes de pintar para evitar parpadeos) -->
+        <script>
+            try { if (localStorage.getItem('tema') === 'oscuro') { document.documentElement.classList.add('dark'); } } catch (e) {}
+        </script>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

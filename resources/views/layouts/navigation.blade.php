@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" aria-label="Principal" class="relative z-30 border-b-2 border-marca-dorado bg-marca-azul">
+<nav aria-label="Principal" class="relative z-30 border-b-2 border-marca-dorado bg-marca-azul">
     {{-- Arco dorado del logo como motivo decorativo sutil. --}}
     <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <svg class="pointer-events-none absolute -right-10 top-0 h-full w-[34rem] max-w-none opacity-20" viewBox="0 0 540 72" preserveAspectRatio="none" aria-hidden="true">
@@ -15,13 +15,12 @@
                     <a href="{{ route('dashboard') }}" class="rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-dorado">
                         <x-logo variante="claro" class="block h-10 w-auto" />
                     </a>
-                </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    {{-- Identificador de la plataforma: "CONEXA · E-learning" --}}
+                    <span class="ms-3 flex items-center gap-3" data-plataforma>
+                        <span class="h-6 w-px bg-white/25" aria-hidden="true"></span>
+                        <span class="text-xs font-semibold tracking-wide text-marca-dorado sm:text-sm">{{ config('marca.plataforma') }}</span>
+                    </span>
                 </div>
             </div>
 
@@ -42,7 +41,7 @@
                 </div>
 
                 <!-- Settings Dropdown -->
-                <x-dropdown align="right" width="48">
+                <x-dropdown align="right" width="w-72">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-marca-gris-claro transition duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-dorado motion-reduce:transition-none" aria-label="Menú de cuenta">
                             <x-encabezado-usuario />
@@ -54,70 +53,9 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
+                        <x-menu-cuenta />
                     </x-slot>
                 </x-dropdown>
-
-                <!-- Hamburger -->
-                <div class="flex items-center sm:hidden">
-                    <button @click="open = ! open" :aria-expanded="open.toString()" class="inline-flex items-center justify-center rounded-md p-2 text-marca-gris-claro transition duration-150 ease-in-out hover:bg-marca-profundo hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-dorado" aria-label="Menú">
-                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="relative hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-marca-profundo">
-            <div class="px-4">
-                <div class="font-medium text-base text-white">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-marca-gris-claro">{{ Auth::user()->email }}</div>
-                <span class="insignia mt-2 bg-marca-dorado text-marca-azul">
-                    <i class="bi bi-person-badge-fill" aria-hidden="true"></i>
-                    {{ Auth::user()->etiquetaRol() }}
-                </span>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
             </div>
         </div>
     </div>

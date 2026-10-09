@@ -6,12 +6,17 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="theme-color" content="{{ config('marca.colores.azul') }}">
 
-        <title>{{ config('marca.nombre') }}</title>
+        <title>{{ config('marca.nombre_corto') }} {{ config('marca.plataforma') }}@if (filled($seccion = $attributes->get('titulo'))) — {{ $seccion }}@endif</title>
 
         <!-- Favicon -->
         <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
         <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
         <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
+        <!-- Fondo claro/oscuro elegido por la persona (se aplica antes de pintar para evitar parpadeos) -->
+        <script>
+            try { if (localStorage.getItem('tema') === 'oscuro') { document.documentElement.classList.add('dark'); } } catch (e) {}
+        </script>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,6 +39,8 @@
             <a href="/" class="relative rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-dorado">
                 <x-logo variante="claro" class="h-auto w-56 sm:w-64" />
             </a>
+
+            <p class="relative mt-2 text-sm font-semibold tracking-[0.3em] text-marca-dorado" data-plataforma>{{ strtoupper(config('marca.plataforma')) }}</p>
 
             <div class="relative mt-8 w-full overflow-hidden rounded-3xl border-t-4 border-marca-dorado bg-white px-6 py-7 shadow-tarjeta-hover sm:max-w-md sm:px-8 sm:py-8">
                 {{ $slot }}
