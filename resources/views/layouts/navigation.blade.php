@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-marca-azul border-b-2 border-marca-dorado">
+<nav x-data="{ open: false }" aria-label="Principal" class="bg-marca-azul border-b-2 border-marca-dorado">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -54,7 +54,7 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-marca-gris-claro hover:text-white hover:bg-marca-profundo focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-dorado transition duration-150 ease-in-out" aria-label="Menú">
+                <button @click="open = ! open" :aria-expanded="open.toString()" class="inline-flex items-center justify-center p-2 rounded-md text-marca-gris-claro hover:text-white hover:bg-marca-profundo focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-dorado transition duration-150 ease-in-out" aria-label="Menú">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

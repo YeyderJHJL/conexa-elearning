@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="es">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,6 +23,10 @@
         @stack('styles')
     </head>
     <body class="font-sans antialiased">
+        <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-marca-azul focus:shadow-lg">
+            Saltar al contenido
+        </a>
+
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
@@ -36,7 +40,9 @@
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main id="contenido" tabindex="-1" class="focus:outline-none">
+                <x-celebracion />
+
                 {{ $slot }}
             </main>
         </div>
