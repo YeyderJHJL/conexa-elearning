@@ -4,7 +4,7 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight break-words">
             Resultado: {{ $intento->quiz->titulo }}
         </h2>
     </x-slot>
@@ -35,7 +35,7 @@
                     @endif
                 </p>
 
-                <p class="mt-3 text-sm text-marca-gris">
+                <p class="mt-3 text-sm text-marca-gris-texto">
                     {{ $correctas }} de {{ $detalle['total'] }} {{ $detalle['total'] === 1 ? 'respuesta correcta' : 'respuestas correctas' }}
                     · Nota mínima: {{ $notaMinima }}%
                 </p>
@@ -47,7 +47,7 @@
 
                     @foreach ($detalle['falladas'] as $fallada)
                         <article class="rounded-2xl bg-white p-4 shadow-sm border border-gray-100 sm:p-5">
-                            <p class="font-medium text-marca-azul leading-snug">{{ $fallada['enunciado'] }}</p>
+                            <p class="font-medium text-marca-azul leading-snug break-words">{{ $fallada['enunciado'] }}</p>
 
                             <p class="mt-3 flex items-start gap-2 text-sm text-red-700">
                                 <i class="bi bi-x-circle-fill mt-0.5 shrink-0" aria-hidden="true"></i>
@@ -70,11 +70,11 @@
             @endif
 
             <div class="flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('quiz.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2 {{ $aprobado ? 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' : 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' }}">
+                <a href="{{ route('quiz.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2 {{ $aprobado ? 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' : 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' }}">
                     <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
                     Reintentar
                 </a>
-                <a href="{{ route('modulos.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2 {{ $aprobado ? 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' : 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' }}">
+                <a href="{{ route('modulos.show', $modulo) }}" class="flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2 {{ $aprobado ? 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' : 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' }}">
                     <i class="bi bi-arrow-left" aria-hidden="true"></i>
                     Volver al módulo
                 </a>

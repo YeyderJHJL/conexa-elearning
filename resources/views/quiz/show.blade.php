@@ -4,7 +4,7 @@
     @endpush
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-marca-azul leading-tight">
+        <h2 class="font-semibold text-xl text-marca-azul leading-tight break-words">
             {{ $quiz->titulo }}
         </h2>
     </x-slot>
@@ -16,7 +16,7 @@
                 Volver a {{ $modulo->titulo }}
             </a>
 
-            <p class="mt-4 text-sm text-marca-gris">
+            <p class="mt-4 text-sm text-marca-gris-texto">
                 <i class="bi bi-patch-question" aria-hidden="true"></i>
                 {{ trans_choice(':count pregunta|:count preguntas', $quiz->preguntas->count()) }}
                 · Necesitas al menos <span class="font-semibold">{{ $notaMinima }}%</span> para aprobar. Puedes reintentar las veces que quieras.
@@ -41,7 +41,7 @@
                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-marca-azul/5 text-sm font-semibold text-marca-azul">
                                 {{ $loop->iteration }}
                             </span>
-                            <p class="font-semibold text-marca-azul leading-snug">{{ $pregunta->enunciado }}</p>
+                            <p class="font-semibold text-marca-azul leading-snug break-words">{{ $pregunta->enunciado }}</p>
                         </div>
 
                         <div class="mt-4 space-y-2">
@@ -51,7 +51,7 @@
                                         type="radio"
                                         name="respuestas[{{ $pregunta->id }}]"
                                         value="{{ $opcion->id }}"
-                                        class="mt-0.5 h-5 w-5 shrink-0 border-gray-300 text-marca-azul focus:ring-marca-dorado"
+                                        class="mt-0.5 h-5 w-5 shrink-0 border-gray-300 text-marca-azul focus:ring-marca-azul"
                                         @checked((string) old("respuestas.{$pregunta->id}") === (string) $opcion->id)
                                         required
                                     >
@@ -66,7 +66,7 @@
                     </fieldset>
                 @endforeach
 
-                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-dorado focus:ring-offset-2">
+                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2">
                     <i class="bi bi-send-check" aria-hidden="true"></i>
                     Enviar respuestas
                 </button>

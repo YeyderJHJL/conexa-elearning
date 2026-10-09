@@ -51,9 +51,22 @@ class QuizController extends Controller
             'respuestas.*.integer' => 'Respuesta no válida.',
         ]);
 
+        $moduloCompletadoAntes = $this->progreso->moduloCompletado($request->user(), $modulo);
+
         $intento = $this->quizzes->calificar($request->user(), $quiz, $datos['respuestas'] ?? []);
 
-        return redirect()->route('quiz.resultado', [$modulo, $intento]);
+        $redireccion = redirect()->route('quiz.resultado', [$modulo, $intento]);
+
+        if (! $intento->aprobado) {
+            return $redireccion;
+        }
+
+        // Solo detalle visual: la celebración se muestra una vez, en la página a la que se redirige.
+        $moduloCompletado = ! $moduloCompletadoAntes && $this->progreso->moduloCompletado($request->user(), $modulo);
+
+        return $redireccion->with('celebracion', $moduloCompletado
+            ? ['titulo' => '¡Módulo completado!', 'mensaje' => "Aprobaste el quiz con {$intento->puntaje}% y terminaste «{$modulo->titulo}». ¡Buen trabajo!"]
+            : ['titulo' => '¡Quiz aprobado!', 'mensaje' => "Obtuviste {$intento->puntaje}%. ¡Muy bien!"]);
     }
 
     /**
