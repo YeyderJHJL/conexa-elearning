@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modulo;
+use App\Services\ProgresoService;
 use App\Services\QuizService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -12,7 +13,7 @@ class ModuloController extends Controller
     /**
      * Detalle de un módulo: sus lecciones activas, cuáles completó el usuario y el estado de su quiz.
      */
-    public function show(Request $request, Modulo $modulo, QuizService $quizzes): View
+    public function show(Request $request, Modulo $modulo, QuizService $quizzes, ProgresoService $progreso): View
     {
         $modulo->load('area');
 
@@ -44,6 +45,8 @@ class ModuloController extends Controller
             'quiz' => $quiz,
             'estadoQuiz' => $quiz ? $quizzes->estadoDe($request->user(), $quiz) : null,
             'notaMinima' => $quiz ? $quizzes->notaMinima($quiz) : null,
+            'puedeDescargarResumen' => filled($modulo->resumen_pdf)
+                && ($request->user()->esAdmin() || $progreso->moduloCompletado($request->user(), $modulo)),
         ]);
     }
 }

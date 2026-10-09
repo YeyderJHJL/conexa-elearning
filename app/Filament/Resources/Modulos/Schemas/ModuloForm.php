@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\Modulos\Schemas;
 
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\Select;
 
 class ModuloForm
 {
@@ -19,6 +20,10 @@ class ModuloForm
                 TextInput::make('titulo')
                     ->required(),
                 TextInput::make('descripcion'),
+                FileUpload::make('resumen_pdf')
+                    ->label('Resumen del módulo (PDF)')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->directory('resumenes'),
                 TextInput::make('orden')
                     ->required()
                     ->numeric()
