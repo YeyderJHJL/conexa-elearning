@@ -37,6 +37,15 @@ return [
     ],
 
     /*
+    | Derivados de la paleta para accesibilidad (no son colores oficiales nuevos).
+    | gris_texto: el gris oficial (#8C8C8E) sobre blanco da 3,4:1 y el mínimo AA para texto
+    | pequeño es 4,5:1; este tono más oscuro da ~5,1:1 y se usa en su lugar para texto secundario.
+    */
+    'derivados' => [
+        'gris_texto' => '#6E6E70',
+    ],
+
+    /*
     | Paletas para Filament. Filament solo toma el matiz de un hex suelto, así que
     | se definen los tonos a mano: el azul institucional queda exacto en el 600
     | (el tono de los botones en modo claro) y el dorado oficial en el 500.

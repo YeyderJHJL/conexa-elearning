@@ -79,7 +79,7 @@ class ModuloLeccionTest extends TestCase
             ->assertSeeInOrder(['Primera leccion', 'Segunda leccion'])
             ->assertDontSee('Leccion oculta');
 
-        $this->assertSame(1, substr_count($respuesta->getContent(), 'bi-check-circle-fill'));
+        $this->assertSame(1, substr_count($respuesta->getContent(), 'title="Completada"'));
         $this->assertSame(1, substr_count($respuesta->getContent(), 'bi-circle '));
     }
 

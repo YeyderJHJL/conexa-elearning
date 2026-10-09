@@ -14,6 +14,7 @@
         --marca-complementario: #4A6FA5;
         --marca-profundo: #1F2F4A;
         --marca-gris-claro: #B3B3B3;
+        --marca-gris-texto: #6E6E70;
     }
 
     body {
@@ -22,6 +23,23 @@
 
     h1, h2, h3, h4 {
         @apply font-semibold;
+    }
+
+    /*
+     * Foco visible para teclado en cualquier elemento interactivo que no defina el suyo.
+     * Azul sobre fondos claros; dorado dentro del encabezado azul.
+     */
+    :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+        outline: 3px solid var(--marca-azul);
+        outline-offset: 2px;
+    }
+
+    nav :where(a, button):focus-visible {
+        outline-color: var(--marca-dorado);
+    }
+
+    [x-cloak] {
+        display: none !important;
     }
 }
 
@@ -59,14 +77,80 @@
     }
 
     .contenido-rico blockquote {
-        @apply border-l-4 border-marca-dorado pl-4 italic text-marca-gris;
+        @apply border-l-4 border-marca-dorado pl-4 italic text-marca-gris-texto;
     }
 
-    .contenido-rico img {
+    .contenido-rico img,
+    .contenido-rico iframe,
+    .contenido-rico video {
         @apply h-auto max-w-full rounded-xl;
     }
 
     .contenido-rico pre {
         @apply overflow-x-auto rounded-xl bg-marca-azul p-4 text-sm text-gray-100;
+    }
+
+    /* Las tablas anchas hacen scroll horizontal en el celular en vez de desbordar la página. */
+    .contenido-rico table {
+        @apply block max-w-full overflow-x-auto;
+    }
+
+    /*
+     * Confeti de celebración: CSS puro, una sola caída, sin interacción.
+     * Se oculta del todo si el usuario pidió menos movimiento.
+     */
+    .confeti {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .confeti > span {
+        position: absolute;
+        top: -16px;
+        width: 8px;
+        height: 14px;
+        border-radius: 2px;
+        opacity: 0;
+        animation: confeti-caida 3.4s ease-in forwards;
+    }
+
+    .confeti > span:nth-child(3n+1) { background: #D7A743; }
+    .confeti > span:nth-child(3n+2) { background: #4A6FA5; }
+    .confeti > span:nth-child(3n)   { background: #1F2F4A; }
+    .confeti > span:nth-child(odd)  { width: 6px; height: 12px; animation-duration: 3.9s; }
+    .confeti > span:nth-child(4n)   { width: 9px; height: 9px; border-radius: 9999px; }
+
+    .confeti > span:nth-child(1)  { left: 4%;  animation-delay: 0s;    --deriva: 40px; }
+    .confeti > span:nth-child(2)  { left: 10%; animation-delay: .35s;  --deriva: -30px; }
+    .confeti > span:nth-child(3)  { left: 16%; animation-delay: .1s;   --deriva: 25px; }
+    .confeti > span:nth-child(4)  { left: 23%; animation-delay: .55s;  --deriva: -45px; }
+    .confeti > span:nth-child(5)  { left: 29%; animation-delay: .2s;   --deriva: 35px; }
+    .confeti > span:nth-child(6)  { left: 36%; animation-delay: .7s;   --deriva: -20px; }
+    .confeti > span:nth-child(7)  { left: 42%; animation-delay: .05s;  --deriva: 30px; }
+    .confeti > span:nth-child(8)  { left: 49%; animation-delay: .45s;  --deriva: -40px; }
+    .confeti > span:nth-child(9)  { left: 55%; animation-delay: .25s;  --deriva: 45px; }
+    .confeti > span:nth-child(10) { left: 61%; animation-delay: .65s;  --deriva: -25px; }
+    .confeti > span:nth-child(11) { left: 67%; animation-delay: .15s;  --deriva: 20px; }
+    .confeti > span:nth-child(12) { left: 73%; animation-delay: .5s;   --deriva: -35px; }
+    .confeti > span:nth-child(13) { left: 79%; animation-delay: .3s;   --deriva: 40px; }
+    .confeti > span:nth-child(14) { left: 85%; animation-delay: .75s;  --deriva: -30px; }
+    .confeti > span:nth-child(15) { left: 90%; animation-delay: .08s;  --deriva: 25px; }
+    .confeti > span:nth-child(16) { left: 95%; animation-delay: .4s;   --deriva: -45px; }
+    .confeti > span:nth-child(17) { left: 13%; animation-delay: .85s;  --deriva: 30px; }
+    .confeti > span:nth-child(18) { left: 58%; animation-delay: .95s;  --deriva: -20px; }
+
+    @keyframes confeti-caida {
+        0%   { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg); }
+        85%  { opacity: 1; }
+        100% { opacity: 0; transform: translate3d(var(--deriva, 0), 105vh, 0) rotate(560deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .confeti {
+            display: none;
+        }
     }
 }
