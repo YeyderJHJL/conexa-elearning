@@ -13,12 +13,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class QuizResource extends Resource
 {
     protected static ?string $model = Quiz::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Evaluación';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationLabel = 'Quizzes';
+
+    protected static ?string $modelLabel = 'quiz';
+
+    protected static ?string $pluralModelLabel = 'quizzes';
 
     protected static ?string $recordTitleAttribute = 'titulo';
 

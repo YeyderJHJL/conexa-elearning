@@ -26,6 +26,8 @@ class ReporteAvance extends Page implements HasTable
 
     protected static string|UnitEnum|null $navigationGroup = 'Reportes';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationLabel = 'Reporte de avance';
 
     protected static ?string $title = 'Reporte de avance';

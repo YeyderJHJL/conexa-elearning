@@ -13,12 +13,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class LeccionResource extends Resource
 {
     protected static ?string $model = Leccion::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Contenido';
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationLabel = 'Lecciones';
+
+    protected static ?string $modelLabel = 'lección';
+
+    protected static ?string $pluralModelLabel = 'lecciones';
 
     protected static ?string $recordTitleAttribute = 'titulo';
 

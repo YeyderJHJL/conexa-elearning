@@ -23,6 +23,8 @@ class FeedbackResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Reportes';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $slug = 'feedback';
 
     protected static ?string $navigationLabel = 'Encuestas de feedback';
