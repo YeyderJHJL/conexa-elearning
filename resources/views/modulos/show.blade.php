@@ -3,48 +3,55 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @endpush
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-marca-azul leading-tight break-words">
-            {{ $modulo->titulo }}
-        </h2>
-    </x-slot>
-
-    <div class="py-6 sm:py-12">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <a href="{{ route('areas.show', $area) }}" class="inline-flex items-center gap-2 text-sm font-medium text-marca-azul hover:text-marca-profundo">
+    <div class="py-6 sm:py-10">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <a href="{{ route('areas.show', $area) }}" class="inline-flex items-center gap-2 rounded text-sm font-semibold text-marca-azul transition hover:-translate-x-0.5 hover:text-marca-complementario motion-reduce:transition-none">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
                 Volver a {{ $area->nombre }}
             </a>
 
             @if (session('aviso'))
-                <div role="alert" class="mt-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                <div role="alert" class="mt-4 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
                     <i class="bi bi-info-circle-fill mt-0.5" aria-hidden="true"></i>
                     <span>{{ session('aviso') }}</span>
                 </div>
             @endif
+
+            <header class="aparece tarjeta relative mt-4 overflow-hidden">
+                <x-portada :imagen="$modulo->imagen_url" :color="$area->color_acento" :icono="$area->icono" class="h-40 sm:h-52" />
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-marca-azul via-marca-azul/60 to-marca-azul/10"></div>
+
+                <div class="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-marca-dorado">{{ $area->nombre }}</p>
+                    <h1 class="mt-1 break-words text-2xl font-semibold tracking-tight text-white sm:text-3xl">{{ $modulo->titulo }}</h1>
+                </div>
+            </header>
 
             @if ($modulo->descripcion)
                 <p class="mt-4 text-marca-gris-texto">{{ $modulo->descripcion }}</p>
             @endif
 
             @if ($lecciones->isEmpty())
-                <div class="mt-6 bg-white rounded-2xl shadow-sm p-8 text-center">
-                    <i class="bi bi-journal-text text-4xl text-marca-azul" aria-hidden="true"></i>
-                    <h3 class="mt-3 text-lg font-semibold text-marca-azul">Este módulo aún no tiene lecciones</h3>
+                <div class="tarjeta mt-6 p-8 text-center">
+                    <span class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-marca-azul/5 text-3xl text-marca-azul">
+                        <i class="bi bi-journal-text" aria-hidden="true"></i>
+                    </span>
+                    <h3 class="mt-4 text-lg font-semibold text-marca-azul">Este módulo aún no tiene lecciones</h3>
                     <p class="mt-1 text-marca-gris-texto">Vuelve pronto: el contenido se publicará aquí.</p>
                 </div>
             @else
-                <ol class="mt-6 space-y-3">
+                <h2 class="mt-8 text-lg font-semibold text-marca-azul">Lecciones</h2>
+                <ol class="mt-3 space-y-3">
                     @foreach ($lecciones as $leccion)
                         @php $completada = $completadas->contains($leccion->id); @endphp
-                        <li>
-                            <a href="{{ route('lecciones.show', $leccion) }}" class="flex items-center gap-4 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 transition hover:border-marca-dorado hover:shadow-md focus:outline-none focus:ring-2 focus:ring-marca-azul">
-                                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-marca-azul/5 text-marca-azul font-semibold">
+                        <li class="aparece" style="animation-delay: {{ min($loop->index, 8) * 50 }}ms">
+                            <a href="{{ route('lecciones.show', $leccion) }}" class="tarjeta tarjeta-elevable flex items-center gap-4 p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-azul focus-visible:ring-offset-2 sm:p-5">
+                                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl font-bold {{ $completada ? 'bg-marca-dorado text-marca-azul' : 'bg-marca-azul/5 text-marca-azul' }}">
                                     {{ $loop->iteration }}
                                 </span>
 
                                 <div class="min-w-0 flex-1">
-                                    <h3 class="text-base font-semibold text-marca-azul leading-snug break-words">{{ $leccion->titulo }}</h3>
+                                    <h3 class="break-words text-base font-semibold leading-snug text-marca-azul">{{ $leccion->titulo }}</h3>
                                     @if ($leccion->duracion_min)
                                         <p class="mt-1 text-sm text-marca-gris-texto">
                                             <i class="bi bi-clock" aria-hidden="true"></i> {{ $leccion->duracion_min }} min
@@ -77,49 +84,56 @@
                         default => 'Rendir quiz del módulo',
                     };
                 @endphp
-                <section class="mt-6 rounded-2xl bg-white p-5 shadow-sm border border-gray-100" aria-label="Quiz del módulo">
-                    <div class="flex flex-wrap items-start justify-between gap-2">
-                        <div class="min-w-0">
-                            <h3 class="font-semibold text-marca-azul">{{ $quiz->titulo }}</h3>
+                <section class="tarjeta relative mt-8 overflow-hidden border-t-4 border-t-marca-dorado p-5 sm:p-6" aria-label="Quiz del módulo">
+                    <div class="flex items-start gap-4">
+                        <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-marca-azul text-2xl text-marca-dorado">
+                            <i class="bi bi-patch-question-fill" aria-hidden="true"></i>
+                        </span>
+
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-start justify-between gap-2">
+                                <h3 class="font-semibold text-marca-azul">{{ $quiz->titulo }}</h3>
+
+                                @if ($estado === 'aprobado')
+                                    <span class="insignia bg-emerald-50 text-emerald-700">
+                                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Aprobado
+                                    </span>
+                                @elseif ($estado === 'desaprobado')
+                                    <span class="insignia bg-amber-50 text-amber-700">
+                                        <i class="bi bi-x-circle-fill" aria-hidden="true"></i> No aprobado
+                                    </span>
+                                @else
+                                    <span class="insignia bg-gray-100 text-gray-600">
+                                        <i class="bi bi-dash-circle" aria-hidden="true"></i> No rendido
+                                    </span>
+                                @endif
+                            </div>
+
                             <p class="mt-1 text-sm text-marca-gris-texto">
                                 {{ trans_choice(':count pregunta|:count preguntas', $quiz->preguntas_count) }} · Nota mínima: {{ $notaMinima }}%
                             </p>
-                        </div>
 
-                        @if ($estado === 'aprobado')
-                            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Aprobado
-                            </span>
-                        @elseif ($estado === 'desaprobado')
-                            <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
-                                <i class="bi bi-x-circle-fill" aria-hidden="true"></i> No aprobado
-                            </span>
-                        @else
-                            <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                                <i class="bi bi-dash-circle" aria-hidden="true"></i> No rendido
-                            </span>
-                        @endif
+                            <p class="mt-3 text-sm text-gray-700">
+                                @if ($estado === 'aprobado')
+                                    Aprobaste con <span class="font-semibold">{{ $estadoQuiz['aprobado']->puntaje }}%</span>
+                                    ({{ trans_choice(':count intento|:count intentos', $estadoQuiz['intentos']) }}).
+                                @elseif ($estado === 'desaprobado')
+                                    Último intento: <span class="font-semibold">{{ $estadoQuiz['ultimo']->puntaje }}%</span>, por debajo de la nota mínima.
+                                @else
+                                    Aún no has rendido este quiz.
+                                @endif
+                            </p>
+                        </div>
                     </div>
 
-                    <p class="mt-3 text-sm text-gray-700">
-                        @if ($estado === 'aprobado')
-                            Aprobaste con <span class="font-semibold">{{ $estadoQuiz['aprobado']->puntaje }}%</span>
-                            ({{ trans_choice(':count intento|:count intentos', $estadoQuiz['intentos']) }}).
-                        @elseif ($estado === 'desaprobado')
-                            Último intento: <span class="font-semibold">{{ $estadoQuiz['ultimo']->puntaje }}%</span>, por debajo de la nota mínima.
-                        @else
-                            Aún no has rendido este quiz.
-                        @endif
-                    </p>
-
-                    <div class="mt-4">
+                    <div class="mt-5">
                         @if ($leccionesCompletas)
-                            <a href="{{ route('quiz.show', $modulo) }}" class="flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2 {{ $estado === 'aprobado' ? 'border border-marca-azul/20 text-marca-azul hover:bg-marca-azul/5' : 'bg-marca-azul text-white shadow-sm hover:bg-marca-profundo' }}">
+                            <a href="{{ route('quiz.show', $modulo) }}" class="btn w-full {{ $estado === 'aprobado' ? 'btn-contorno' : 'btn-azul' }}">
                                 <i class="bi {{ $estado === 'no_rendido' ? 'bi-patch-question' : 'bi-arrow-repeat' }}" aria-hidden="true"></i>
                                 {{ $etiquetaBoton }}
                             </a>
                         @else
-                            <span aria-disabled="true" class="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-gray-100 px-5 py-3 font-semibold text-marca-gris-texto">
+                            <span aria-disabled="true" class="btn w-full cursor-not-allowed bg-gray-100 text-marca-gris-texto">
                                 <i class="bi bi-lock-fill" aria-hidden="true"></i>
                                 {{ $etiquetaBoton }}
                             </span>
@@ -127,7 +141,7 @@
                         @endif
 
                         @if ($intentoResultado)
-                            <a href="{{ route('quiz.resultado', [$modulo, $intentoResultado]) }}" class="mt-3 flex items-center justify-center gap-1 text-sm font-medium text-marca-azul hover:text-marca-profundo">
+                            <a href="{{ route('quiz.resultado', [$modulo, $intentoResultado]) }}" class="mt-3 flex items-center justify-center gap-1 rounded text-sm font-semibold text-marca-azul hover:text-marca-complementario">
                                 <i class="bi bi-card-checklist" aria-hidden="true"></i>
                                 {{ $estado === 'aprobado' ? 'Ver mi resultado aprobado' : 'Ver mi último resultado' }}
                             </a>
@@ -137,7 +151,7 @@
             @endif
 
             @if ($puedeDescargarResumen)
-                <a href="{{ route('modulos.resumen', $modulo) }}" class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-marca-azul/20 bg-white px-5 py-3 font-semibold text-marca-azul shadow-sm hover:bg-marca-azul/5 focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2">
+                <a href="{{ route('modulos.resumen', $modulo) }}" class="btn btn-contorno mt-6 w-full">
                     <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
                     Descargar resumen del módulo
                 </a>

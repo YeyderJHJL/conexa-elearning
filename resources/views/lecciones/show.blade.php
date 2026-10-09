@@ -3,22 +3,30 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @endpush
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-marca-azul leading-tight break-words">
-            {{ $leccion->titulo }}
-        </h2>
-    </x-slot>
-
-    <div class="py-6 sm:py-12">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <a href="{{ route('modulos.show', $modulo) }}" class="inline-flex items-center gap-2 text-sm font-medium text-marca-azul hover:text-marca-profundo">
+    <div class="py-6 sm:py-10">
+        <div class="mx-auto max-w-3xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <a href="{{ route('modulos.show', $modulo) }}" class="inline-flex items-center gap-2 rounded text-sm font-semibold text-marca-azul transition hover:-translate-x-0.5 hover:text-marca-complementario motion-reduce:transition-none">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
                 Volver a {{ $modulo->titulo }}
             </a>
 
+            <header class="aparece">
+                <p class="text-xs font-semibold uppercase tracking-wide text-marca-gris-texto">{{ $modulo->titulo }}</p>
+                <h1 class="mt-1 break-words text-3xl font-semibold leading-tight tracking-tight text-marca-azul sm:text-4xl">{{ $leccion->titulo }}</h1>
+
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                    @if ($leccion->duracion_min)
+                        <span class="insignia bg-marca-azul/5 text-marca-azul"><i class="bi bi-clock" aria-hidden="true"></i> {{ $leccion->duracion_min }} min</span>
+                    @endif
+                    @if ($completada)
+                        <span class="insignia bg-marca-dorado text-marca-azul"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Completada</span>
+                    @endif
+                </div>
+            </header>
+
             @if ($leccion->url_video)
                 @if ($leccion->video_embed_url)
-                    <div class="aspect-video overflow-hidden rounded-2xl bg-black shadow-sm">
+                    <div class="aspect-video overflow-hidden rounded-2xl bg-marca-azul shadow-tarjeta-hover ring-1 ring-marca-azul/10">
                         <iframe
                             src="{{ $leccion->video_embed_url }}"
                             title="{{ $leccion->titulo }}"
@@ -29,15 +37,17 @@
                             referrerpolicy="strict-origin-when-cross-origin"></iframe>
                     </div>
                 @elseif ($enlaceVideo = \Illuminate\Support\Str::sanitizeUrl($leccion->url_video))
-                    <a href="{{ $enlaceVideo }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm border border-gray-100 text-marca-azul hover:border-marca-dorado">
-                        <i class="bi bi-play-circle-fill text-2xl" aria-hidden="true"></i>
-                        <span class="font-medium">Ver el video de esta lección</span>
+                    <a href="{{ $enlaceVideo }}" target="_blank" rel="noopener noreferrer" class="tarjeta tarjeta-elevable flex items-center gap-4 p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-azul focus-visible:ring-offset-2">
+                        <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-marca-azul text-2xl text-marca-dorado">
+                            <i class="bi bi-play-fill" aria-hidden="true"></i>
+                        </span>
+                        <span class="font-semibold text-marca-azul">Ver el video de esta lección</span>
                     </a>
                 @endif
             @endif
 
             @if (filled($leccion->contenido))
-                <article class="rounded-2xl bg-white p-5 sm:p-6 shadow-sm border border-gray-100">
+                <article class="tarjeta p-6 sm:p-9">
                     <div class="contenido-rico">
                         {!! \Illuminate\Support\Str::sanitizeHtml($leccion->contenido) !!}
                     </div>
@@ -45,9 +55,9 @@
             @endif
 
             @if (filled($leccion->archivo_pdf))
-                <section class="flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-sm border border-gray-100 sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-marca-azul/5 text-2xl text-marca-azul">
+                <section class="tarjeta flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center gap-4">
+                        <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-marca-azul text-3xl text-marca-dorado">
                             <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i>
                         </span>
                         <div>
@@ -56,10 +66,10 @@
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <a href="{{ route('lecciones.pdf', $leccion) }}" target="_blank" rel="noopener" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-marca-azul px-4 py-2 text-sm font-medium text-white hover:bg-marca-profundo sm:flex-none">
+                        <a href="{{ route('lecciones.pdf', $leccion) }}" target="_blank" rel="noopener" class="btn btn-azul flex-1 !px-4 !py-2 text-sm sm:flex-none">
                             <i class="bi bi-eye" aria-hidden="true"></i> Ver
                         </a>
-                        <a href="{{ route('lecciones.pdf', ['leccion' => $leccion, 'descargar' => 1]) }}" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-marca-azul/20 px-4 py-2 text-sm font-medium text-marca-azul hover:bg-marca-azul/5 sm:flex-none">
+                        <a href="{{ route('lecciones.pdf', ['leccion' => $leccion, 'descargar' => 1]) }}" class="btn btn-contorno flex-1 !px-4 !py-2 text-sm sm:flex-none">
                             <i class="bi bi-download" aria-hidden="true"></i> Descargar
                         </a>
                     </div>
@@ -74,17 +84,19 @@
             @endphp
 
             @if ($sinContenido)
-                <div class="rounded-2xl bg-white p-8 text-center shadow-sm border border-gray-100">
-                    <i class="bi bi-hourglass-split text-4xl text-marca-azul" aria-hidden="true"></i>
-                    <h3 class="mt-3 text-lg font-semibold text-marca-azul">El contenido de esta lección llegará pronto</h3>
+                <div class="tarjeta p-8 text-center">
+                    <span class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-marca-azul/5 text-3xl text-marca-azul">
+                        <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+                    </span>
+                    <h3 class="mt-4 text-lg font-semibold text-marca-azul">El contenido de esta lección llegará pronto</h3>
                     <p class="mt-1 text-marca-gris-texto">Todavía no hay texto, video ni material para mostrar aquí. Vuelve más tarde o continúa con las demás lecciones.</p>
                 </div>
             @endif
 
             <form method="POST" action="{{ route('lecciones.completar', $leccion) }}">
                 @csrf
-                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-marca-azul px-5 py-3 font-semibold text-white shadow-sm hover:bg-marca-profundo focus:outline-none focus:ring-2 focus:ring-marca-azul focus:ring-offset-2">
-                    <i class="bi bi-check2-circle" aria-hidden="true"></i>
+                <button type="submit" class="btn btn-azul w-full py-4">
+                    <i class="bi bi-check2-circle text-xl" aria-hidden="true"></i>
                     @if ($completada)
                         Completada · {{ $siguiente ? 'continuar' : 'volver al módulo' }}
                     @else
@@ -95,7 +107,7 @@
 
             <nav class="grid grid-cols-2 gap-3 text-sm" aria-label="Navegación entre lecciones">
                 @if ($anterior)
-                    <a href="{{ route('lecciones.show', $anterior) }}" class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-marca-dorado">
+                    <a href="{{ route('lecciones.show', $anterior) }}" class="tarjeta tarjeta-elevable flex items-center gap-2 px-4 py-3 font-medium text-marca-azul focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-azul focus-visible:ring-offset-2">
                         <i class="bi bi-chevron-left" aria-hidden="true"></i>
                         <span class="truncate" title="{{ $anterior->titulo }}">{{ $anterior->titulo }}</span>
                     </a>
@@ -104,7 +116,7 @@
                 @endif
 
                 @if ($siguiente)
-                    <a href="{{ route('lecciones.show', $siguiente) }}" class="flex items-center justify-end gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-700 hover:border-marca-dorado">
+                    <a href="{{ route('lecciones.show', $siguiente) }}" class="tarjeta tarjeta-elevable flex items-center justify-end gap-2 px-4 py-3 font-medium text-marca-azul focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-azul focus-visible:ring-offset-2">
                         <span class="truncate" title="{{ $siguiente->titulo }}">{{ $siguiente->titulo }}</span>
                         <i class="bi bi-chevron-right" aria-hidden="true"></i>
                     </a>

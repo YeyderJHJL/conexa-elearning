@@ -1,4 +1,7 @@
 <x-guest-layout>
+    <h1 class="text-2xl font-semibold tracking-tight text-marca-azul">Te damos la bienvenida</h1>
+    <p class="mb-6 mt-1 text-sm text-marca-gris-texto">Ingresa con tu correo para continuar con tu capacitación.</p>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
