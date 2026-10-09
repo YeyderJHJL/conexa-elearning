@@ -108,6 +108,15 @@ class ProgresoService
     }
 
     /**
+     * Si el usuario completó el área: todos sus módulos con contenido están completos.
+     * Un área sin contenido nunca cuenta como completada.
+     */
+    public function areaCompletada(User $user, Area $area): bool
+    {
+        return $this->area($user, $area) >= 100;
+    }
+
+    /**
      * Estado de cada módulo activo de un área para el usuario, indexado por id de módulo:
      * completado, en_curso o bloqueado.
      *
@@ -138,9 +147,17 @@ class ProgresoService
      */
     public function moduloDesbloqueado(User $user, Modulo $modulo): bool
     {
-        $fila = $this->evaluar($user, [$modulo->area_id])->get($modulo->area_id)?->firstWhere('id', $modulo->id);
+        $fila = $this->filaDe($user, $modulo);
 
         return $fila !== null && $fila->estado !== self::BLOQUEADO;
+    }
+
+    /**
+     * Si el usuario completó el módulo: vio todas sus lecciones y, si tiene quiz, lo aprobó.
+     */
+    public function moduloCompletado(User $user, Modulo $modulo): bool
+    {
+        return $this->filaDe($user, $modulo)?->estado === self::COMPLETADO;
     }
 
     /**
@@ -186,6 +203,14 @@ class ProgresoService
         }
 
         return null;
+    }
+
+    /**
+     * Fila evaluada de un módulo activo (con su estado en la secuencia), o null si no está activo.
+     */
+    private function filaDe(User $user, Modulo $modulo): ?object
+    {
+        return $this->evaluar($user, [$modulo->area_id])->get($modulo->area_id)?->firstWhere('id', $modulo->id);
     }
 
     /**
