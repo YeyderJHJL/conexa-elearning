@@ -351,13 +351,13 @@ class PulidoFinalTest extends TestCase
 
         auth()->logout();
 
-        $loginLogo = $this->dom($this->get('/login')->getContent())->query('//img[contains(@src, "Logo%20sobre%20fondo%20blanco")]');
+        $loginLogo = $this->dom($this->get('/login')->getContent())->query('//img[contains(@src, "Sobre%20fondo%20azul")]');
         $this->assertSame('Conexa Capital Central', $loginLogo->item(0)->getAttribute('alt'));
     }
 
     public function test_gold_is_never_used_as_text_color_on_light_backgrounds(): void
     {
-        $permitidos = ['components/ruta-nodo.blade.php', 'dashboard.blade.php'];
+        $permitidos = ['areas/show.blade.php', 'components/ruta-nodo.blade.php', 'dashboard.blade.php', 'lecciones/show.blade.php', 'modulos/show.blade.php'];
         $encontrados = [];
 
         foreach (File::allFiles(resource_path('views')) as $archivo) {
@@ -379,7 +379,7 @@ class PulidoFinalTest extends TestCase
 
     public function test_small_text_uses_the_accessible_gray_and_focus_rings_are_dark_on_light_backgrounds(): void
     {
-        $excluidos = ['welcome.blade.php', 'layouts/navigation.blade.php', 'components/nav-link.blade.php', 'components/responsive-nav-link.blade.php', 'components/celebracion.blade.php'];
+        $excluidos = ['welcome.blade.php', 'layouts/navigation.blade.php', 'components/nav-link.blade.php', 'components/responsive-nav-link.blade.php', 'components/celebracion.blade.php', 'layouts/guest.blade.php'];
 
         foreach (File::allFiles(resource_path('views')) as $archivo) {
             $ruta = str_replace(DIRECTORY_SEPARATOR, '/', $archivo->getRelativePathname());

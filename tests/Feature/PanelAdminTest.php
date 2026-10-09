@@ -133,7 +133,7 @@ class PanelAdminTest extends TestCase
     public function test_role_labels_are_human_readable(): void
     {
         $this->assertSame('Administrador', $this->admin->etiquetaRol());
-        $this->assertSame('Trabajador', User::factory()->make(['rol' => 'trabajador'])->etiquetaRol());
+        $this->assertSame('Colaborador', User::factory()->make(['rol' => 'trabajador'])->etiquetaRol());
         $this->assertSame('Invitado', User::factory()->make(['rol' => 'invitado'])->etiquetaRol());
     }
 

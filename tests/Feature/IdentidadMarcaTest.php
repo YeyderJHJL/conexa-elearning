@@ -164,13 +164,13 @@ class IdentidadMarcaTest extends TestCase
             ->assertDontSee('images/'.self::LOGO_OSCURO, false);
     }
 
-    public function test_login_page_uses_the_dark_logo_on_a_light_background(): void
+    public function test_login_page_uses_the_light_logo_on_the_navy_background(): void
     {
         $this->get('/login')
             ->assertOk()
             ->assertSee('family=Montserrat', false)
-            ->assertSee('images/'.self::LOGO_OSCURO, false)
-            ->assertDontSee('images/'.self::LOGO_CLARO, false)
+            ->assertSee('images/'.self::LOGO_CLARO, false)
+            ->assertDontSee('images/'.self::LOGO_OSCURO, false)
             ->assertSee('favicon.png', false)
             ->assertSee('bg-marca-azul', false);
     }
@@ -188,7 +188,7 @@ class IdentidadMarcaTest extends TestCase
         $this->get(route('areas.show', $area))
             ->assertOk()
             ->assertSee('Completado')
-            ->assertSee('bg-marca-dorado/15', false)
+            ->assertSee('insignia bg-marca-dorado text-marca-azul', false)
             ->assertSee('bg-marca-dorado', false)
             ->assertSee('text-marca-azul', false);
 
