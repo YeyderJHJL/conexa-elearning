@@ -260,13 +260,36 @@ class ReporteTest extends TestCase
         foreach ([
             'Reporte de capacitación', 'Ana Torres', 'Vendedora', '01/09/2026', 'Avance global', '33%', 'En progreso',
             'Ventas', 'Introduccion a ventas', 'Cierre de ventas', '60%', 'No aprobado', 'Bloqueado', 'Sin quiz',
-            'Puntos a reforzar', 'Logo Conexa',
+            'Puntos a reforzar',
         ] as $texto) {
             $this->assertStringContainsString($texto, $html);
         }
 
         $this->assertStringNotContainsString('Contenido agregado después de aprobar', $html);
-        $this->assertStringNotContainsString('src=', $html);
+    }
+
+    public function test_report_view_uses_the_dark_logo_when_gd_is_available_and_the_brand_name_otherwise(): void
+    {
+        $html = view('pdf.reporte', $this->reporte->datosPara($this->trabajador))->render();
+
+        if (extension_loaded('gd')) {
+            $this->assertStringContainsString('<img src="'.public_path('images/'.config('marca.logos.oscuro')).'"', $html);
+            $this->assertStringContainsString('alt="Conexa Capital Central"', $html);
+        } else {
+            $this->assertStringNotContainsString('<img', $html);
+            $this->assertStringContainsString('CAPITAL CENTRAL', $html);
+        }
+
+        $this->assertFileExists(public_path('images/'.config('marca.logos.oscuro')));
+    }
+
+    public function test_report_view_uses_the_official_palette(): void
+    {
+        $html = view('pdf.reporte', $this->reporte->datosPara($this->trabajador))->render();
+
+        $this->assertStringContainsString('#D7A743', $html);
+        $this->assertStringContainsString('#0E1A34', $html);
+        $this->assertStringNotContainsString('#2563eb', $html);
     }
 
     public function test_report_view_includes_the_lesson_note_when_there_is_one(): void
