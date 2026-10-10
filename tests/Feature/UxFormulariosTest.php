@@ -10,6 +10,7 @@ use App\Filament\Resources\Modulos\Pages\CreateModulo;
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\Area;
+use App\Models\Modulo;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -45,7 +46,7 @@ class UxFormulariosTest extends TestCase
             ->fillForm(['area_id' => $area->id, 'titulo' => 'Introducción', 'orden' => 1])
             ->call('create')
             ->assertHasNoFormErrors()
-            ->assertRedirect(ModuloResource::getUrl('index'));
+            ->assertRedirect(ModuloResource::getUrl('edit', ['record' => Modulo::where('titulo', 'Introducción')->firstOrFail()]));
 
         Livewire::test(CreateUser::class)
             ->fillForm(['name' => 'Ana Pérez', 'email' => 'ana@example.com', 'rol' => 'trabajador', 'password' => 'secreto-123'])

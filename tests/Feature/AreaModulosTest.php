@@ -108,13 +108,11 @@ class AreaModulosTest extends TestCase
             ->assertTableColumnStateSet('quiz_exists', true, $modulo);
     }
 
-    public function test_content_detail_resources_are_hidden_from_the_menu_but_modules_and_quizzes_stay(): void
+    public function test_only_the_options_resource_is_hidden_from_the_menu(): void
     {
-        foreach ([LeccionResource::class, PreguntaResource::class, OpcionResource::class] as $recurso) {
-            $this->assertFalse($recurso::shouldRegisterNavigation(), $recurso);
-        }
+        $this->assertFalse(OpcionResource::shouldRegisterNavigation());
 
-        foreach ([AreaResource::class, ModuloResource::class, QuizResource::class] as $recurso) {
+        foreach ([AreaResource::class, ModuloResource::class, LeccionResource::class, QuizResource::class, PreguntaResource::class] as $recurso) {
             $this->assertTrue($recurso::shouldRegisterNavigation(), $recurso);
         }
     }

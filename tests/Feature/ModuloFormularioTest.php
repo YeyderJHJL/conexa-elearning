@@ -2,16 +2,21 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Modulos\ModuloResource;
 use App\Filament\Resources\Modulos\Pages\CreateModulo;
 use App\Filament\Resources\Modulos\Pages\EditModulo;
+use App\Filament\Resources\Modulos\RelationManagers\LeccionesRelationManager;
+use App\Filament\Resources\Quizzes\QuizResource;
 use App\Models\Area;
 use App\Models\Leccion;
 use App\Models\Modulo;
-use App\Models\Opcion;
 use App\Models\Quiz;
 use App\Models\User;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -21,6 +26,8 @@ class ModuloFormularioTest extends TestCase
 
     private Area $area;
 
+    private Modulo $modulo;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,134 +35,125 @@ class ModuloFormularioTest extends TestCase
         $this->actingAs(User::factory()->create(['rol' => 'admin']));
 
         $this->area = Area::create(['nombre' => 'Ventas', 'slug' => 'ventas']);
+        $this->modulo = Modulo::create(['area_id' => $this->area->id, 'titulo' => 'Introducción', 'orden' => 1]);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function pregunta(string $enunciado): array
+    private function gestor(): Testable
     {
-        return [
-            'enunciado' => $enunciado,
-            'opciones' => [
-                ['texto' => 'Opción A', 'es_correcta' => true],
-                ['texto' => 'Opción B', 'es_correcta' => false],
-            ],
-        ];
+        return Livewire::test(LeccionesRelationManager::class, [
+            'ownerRecord' => $this->modulo,
+            'pageClass' => EditModulo::class,
+        ]);
     }
 
-    public function test_a_module_is_created_with_lessons_and_quiz_in_one_form(): void
+    public function test_the_edit_page_shows_the_data_and_lessons_tabs(): void
+    {
+        $this->get(ModuloResource::getUrl('edit', ['record' => $this->modulo]))
+            ->assertOk()
+            ->assertSee('Datos del módulo')
+            ->assertSee('Lecciones');
+    }
+
+    public function test_creating_a_module_opens_its_edit_page_to_add_lessons(): void
     {
         Livewire::test(CreateModulo::class)
-            ->fillForm([
-                'area_id' => $this->area->id,
-                'titulo' => 'Introducción',
-                'orden' => 1,
-                'lecciones' => [
-                    ['titulo' => 'Bienvenida', 'duracion_min' => 5, 'tipo_video' => 'enlace', 'url_video' => 'https://www.youtube.com/watch?v=abc123'],
-                    ['titulo' => 'Políticas', 'tipo_video' => 'ninguno'],
-                ],
-                'quiz' => [
-                    'titulo' => 'Quiz de introducción',
-                    'nota_minima' => 80,
-                    'preguntas' => [$this->pregunta('¿Primera?')],
-                ],
+            ->fillForm(['area_id' => $this->area->id, 'titulo' => 'Seguridad', 'orden' => 2])
+            ->call('create')
+            ->assertHasNoFormErrors()
+            ->assertRedirect(ModuloResource::getUrl('edit', ['record' => Modulo::where('titulo', 'Seguridad')->firstOrFail()]));
+    }
+
+    public function test_a_lesson_is_created_from_the_modal_with_the_next_order(): void
+    {
+        Leccion::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Anterior', 'orden' => 6]);
+
+        $this->gestor()
+            ->callAction(TestAction::make(CreateAction::class)->table(), data: [
+                'titulo' => 'Bienvenida',
+                'duracion_min' => 5,
+                'tipo_video' => 'enlace',
+                'url_video' => 'https://www.youtube.com/watch?v=abc123',
+                'activa' => true,
             ])
-            ->call('create')
             ->assertHasNoFormErrors();
 
-        $modulo = Modulo::firstOrFail();
+        $leccion = Leccion::where('titulo', 'Bienvenida')->firstOrFail();
 
-        $this->assertSame(['Bienvenida', 'Políticas'], $modulo->lecciones->pluck('titulo')->all());
-        $this->assertSame([1, 2], $modulo->lecciones->pluck('orden')->all());
-        $this->assertSame('https://www.youtube.com/watch?v=abc123', $modulo->lecciones->first()->url_video);
-        $this->assertSame('Quiz de introducción', $modulo->quiz->titulo);
-        $this->assertSame(80, $modulo->quiz->nota_minima);
-        $this->assertSame(['¿Primera?'], $modulo->quiz->preguntas->pluck('enunciado')->all());
-        $this->assertSame(2, Opcion::count());
-    }
-
-    public function test_the_quiz_is_optional(): void
-    {
-        Livewire::test(CreateModulo::class)
-            ->fillForm(['area_id' => $this->area->id, 'titulo' => 'Sin quiz', 'orden' => 1])
-            ->call('create')
-            ->assertHasNoFormErrors();
-
-        $this->assertSame(1, Modulo::count());
-        $this->assertSame(0, Quiz::count());
-    }
-
-    public function test_the_quiz_title_defaults_to_the_module_title(): void
-    {
-        Livewire::test(CreateModulo::class)
-            ->fillForm([
-                'area_id' => $this->area->id,
-                'titulo' => 'Seguridad',
-                'orden' => 1,
-                'quiz' => ['preguntas' => [$this->pregunta('¿Sola?')]],
-            ])
-            ->call('create')
-            ->assertHasNoFormErrors();
-
-        $this->assertSame('Quiz: Seguridad', Quiz::firstOrFail()->titulo);
+        $this->assertSame($this->modulo->id, $leccion->modulo_id);
+        $this->assertSame(7, $leccion->orden);
+        $this->assertSame('https://www.youtube.com/watch?v=abc123', $leccion->url_video);
     }
 
     public function test_only_the_chosen_video_source_is_kept(): void
     {
-        Livewire::test(CreateModulo::class)
-            ->fillForm([
-                'area_id' => $this->area->id,
-                'titulo' => 'Módulo',
-                'orden' => 1,
-                'lecciones' => [
-                    ['titulo' => 'Sin video', 'tipo_video' => 'ninguno', 'url_video' => 'https://vimeo.com/123456'],
-                ],
+        $this->gestor()
+            ->callAction(TestAction::make(CreateAction::class)->table(), data: [
+                'titulo' => 'Sin video',
+                'tipo_video' => 'ninguno',
+                'url_video' => 'https://vimeo.com/123456',
+                'activa' => true,
             ])
-            ->call('create')
             ->assertHasNoFormErrors();
 
         $this->assertNull(Leccion::firstOrFail()->url_video);
     }
 
-    public function test_a_lesson_can_be_added_from_the_modal(): void
+    public function test_a_lesson_title_is_required(): void
     {
-        $modulo = Modulo::create(['area_id' => $this->area->id, 'titulo' => 'Introducción', 'orden' => 1]);
+        $this->gestor()
+            ->callAction(TestAction::make(CreateAction::class)->table(), data: ['titulo' => ''])
+            ->assertHasFormErrors(['titulo' => 'required']);
 
-        Livewire::test(EditModulo::class, ['record' => $modulo->getKey()])
-            ->callAction(TestAction::make('add')->schemaComponent('lecciones'), data: [
-                'titulo' => 'Desde el modal',
-                'duracion_min' => 10,
+        $this->assertSame(0, Leccion::count());
+    }
+
+    public function test_a_lesson_can_be_edited_from_the_modal(): void
+    {
+        $leccion = Leccion::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Original', 'orden' => 1, 'url_video' => 'https://vimeo.com/123456']);
+
+        $this->gestor()
+            ->callAction(TestAction::make(EditAction::class)->table($leccion), data: [
+                'titulo' => 'Editada',
                 'tipo_video' => 'ninguno',
                 'activa' => true,
             ])
-            ->assertHasNoFormErrors()
-            ->call('save')
             ->assertHasNoFormErrors();
 
-        $leccion = $modulo->lecciones()->firstOrFail();
+        $leccion->refresh();
 
-        $this->assertSame('Desde el modal', $leccion->titulo);
-        $this->assertSame(10, $leccion->duracion_min);
+        $this->assertSame('Editada', $leccion->titulo);
+        $this->assertNull($leccion->url_video);
+        $this->assertSame(1, Leccion::count());
     }
 
-    public function test_editing_keeps_existing_lessons_and_quiz_by_id(): void
+    public function test_the_table_lists_only_the_lessons_of_its_module(): void
     {
-        $modulo = Modulo::create(['area_id' => $this->area->id, 'titulo' => 'Introducción', 'orden' => 1]);
-        $leccion = Leccion::create(['modulo_id' => $modulo->id, 'titulo' => 'Original', 'orden' => 1]);
-        $quiz = Quiz::create(['modulo_id' => $modulo->id, 'titulo' => 'Quiz']);
+        $propia = Leccion::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Propia', 'orden' => 1]);
+        $otro = Modulo::create(['area_id' => $this->area->id, 'titulo' => 'Otro', 'orden' => 2]);
+        $ajena = Leccion::create(['modulo_id' => $otro->id, 'titulo' => 'Ajena', 'orden' => 1]);
 
-        $componente = Livewire::test(EditModulo::class, ['record' => $modulo->getKey()]);
-        $clave = array_key_first($componente->get('data.lecciones'));
+        $this->gestor()
+            ->assertCanSeeTableRecords([$propia])
+            ->assertCanNotSeeTableRecords([$ajena]);
+    }
 
-        $componente
-            ->set("data.lecciones.{$clave}.titulo", 'Editada')
-            ->call('save')
-            ->assertHasNoFormErrors();
+    public function test_the_quiz_action_creates_the_quiz_and_opens_it(): void
+    {
+        Livewire::test(EditModulo::class, ['record' => $this->modulo->getRouteKey()])
+            ->callAction('quiz')
+            ->assertRedirect(QuizResource::getUrl('edit', ['record' => Quiz::firstOrFail()]));
 
-        $this->assertSame('Editada', $leccion->fresh()->titulo);
-        $this->assertSame(1, Leccion::count());
+        $this->assertSame('Quiz: Introducción', $this->modulo->quiz->titulo);
+    }
+
+    public function test_the_quiz_action_reuses_an_existing_quiz(): void
+    {
+        $quiz = Quiz::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Existente']);
+
+        Livewire::test(EditModulo::class, ['record' => $this->modulo->getRouteKey()])
+            ->callAction('quiz')
+            ->assertRedirect(QuizResource::getUrl('edit', ['record' => $quiz]));
+
         $this->assertSame(1, Quiz::count());
-        $this->assertTrue($quiz->fresh()->is($modulo->fresh()->quiz));
     }
 }
