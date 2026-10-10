@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Quizzes\Schemas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -17,7 +18,7 @@ class QuizForm
                 Section::make('Datos del quiz')
                     ->description('Cada módulo tiene un quiz que se aprueba con la nota mínima.')
                     ->icon(Heroicon::OutlinedClipboardDocumentCheck)
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
                         Select::make('modulo_id')
                             ->label('Módulo')
@@ -25,19 +26,31 @@ class QuizForm
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpanFull(),
-                        TextInput::make('titulo')
-                            ->label('Título')
-                            ->required()
-                            ->maxLength(255),
+                            ->unique(ignoreRecord: true)
+                            ->validationMessages(['unique' => 'Este módulo ya tiene un quiz.'])
+                            ->columnSpan(2),
                         TextInput::make('nota_minima')
-                            ->label('Nota mínima para aprobar')
+                            ->label('Nota mínima')
                             ->numeric()
                             ->minValue(0)
                             ->maxValue(100)
                             ->suffix('%')
                             ->placeholder('70')
-                            ->helperText('Si lo dejas vacío se usa 70%.'),
+                            ->helperText('Vacío = 70%.'),
+                        TextInput::make('titulo')
+                            ->label('Título')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Preguntas')
+                    ->description(fn (Get $get): string => count($get('preguntas') ?? []) === 0
+                        ? 'Aún no hay preguntas. Usa «Agregar pregunta» para crear la primera; puedes seguir agregando más después.'
+                        : 'Abre una pregunta para editarla, arrástrala para reordenarla o agrega otra con el botón.')
+                    ->icon(Heroicon::OutlinedQuestionMarkCircle)
+                    ->schema([
+                        PreguntasRepeater::make(),
                     ]),
             ]);
     }
