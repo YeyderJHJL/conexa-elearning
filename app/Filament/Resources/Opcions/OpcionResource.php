@@ -24,7 +24,7 @@ class OpcionResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = 'Evaluación';
 
     /**
-     * Se administra desde el formulario del módulo / del quiz; la tabla sigue disponible por URL.
+     * Las opciones se gestionan dentro de cada pregunta; la tabla sigue disponible por URL.
      */
     protected static bool $shouldRegisterNavigation = false;
 
