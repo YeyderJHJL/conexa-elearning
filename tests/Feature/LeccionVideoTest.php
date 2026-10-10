@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Leccions\LeccionResource;
 use App\Filament\Resources\Leccions\Pages\CreateLeccion;
+use App\Filament\Resources\Leccions\Pages\EditLeccion;
 use App\Filament\Resources\Leccions\Schemas\LeccionForm;
 use App\Models\Area;
 use App\Models\Leccion;
@@ -116,7 +118,7 @@ class LeccionVideoTest extends TestCase
         $this->assertStringNotContainsString('llegará pronto', $html, 'Un video subido cuenta como contenido.');
     }
 
-    public function test_a_lesson_can_show_the_uploaded_video_and_a_youtube_link_together(): void
+    public function test_a_lesson_shows_only_one_video_source_even_with_legacy_data_in_both(): void
     {
         $leccion = $this->leccionConVideo(['url_video' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ']);
 
@@ -124,7 +126,40 @@ class LeccionVideoTest extends TestCase
             ->get(route('lecciones.show', $leccion))
             ->assertOk()
             ->assertSee('data-video-subido', false)
-            ->assertSee('youtube-nocookie.com/embed/dQw4w9WgXcQ', false);
+            ->assertDontSee('youtube-nocookie.com', false);
+    }
+
+    public function test_choosing_a_link_clears_the_uploaded_file_and_deletes_it_from_disk(): void
+    {
+        $leccion = $this->leccionConVideo();
+        $this->actingAs(User::factory()->create(['rol' => 'admin']));
+
+        Livewire::test(EditLeccion::class, ['record' => $leccion->getRouteKey()])
+            ->assertFormSet(['tipo_video' => 'archivo'])
+            ->fillForm(['tipo_video' => 'enlace', 'url_video' => 'https://youtu.be/dQw4w9WgXcQ'])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertRedirect(LeccionResource::getUrl('index'));
+
+        $leccion->refresh();
+        $this->assertNull($leccion->archivo_video);
+        $this->assertSame('https://youtu.be/dQw4w9WgXcQ', $leccion->url_video);
+        Storage::disk($this->disco)->assertMissing('lecciones/videos/clase.mp4');
+    }
+
+    public function test_choosing_a_file_or_no_video_clears_the_link(): void
+    {
+        $this->actingAs(User::factory()->create(['rol' => 'admin']));
+        $leccion = Leccion::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Con enlace', 'activa' => true, 'url_video' => 'https://youtu.be/dQw4w9WgXcQ']);
+
+        Livewire::test(EditLeccion::class, ['record' => $leccion->getRouteKey()])
+            ->assertFormSet(['tipo_video' => 'enlace'])
+            ->fillForm(['tipo_video' => 'ninguno'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertNull($leccion->refresh()->url_video);
+        $this->assertNull($leccion->archivo_video);
     }
 
     public function test_lessons_without_an_uploaded_video_render_no_player(): void
@@ -142,13 +177,13 @@ class LeccionVideoTest extends TestCase
         $this->actingAs(User::factory()->create(['rol' => 'admin']));
 
         Livewire::test(CreateLeccion::class)
-            ->fillForm(['modulo_id' => $this->modulo->id, 'titulo' => 'Enlace raro', 'orden' => 1, 'url_video' => 'https://example.com/pagina-con-video'])
+            ->fillForm(['modulo_id' => $this->modulo->id, 'titulo' => 'Enlace raro', 'orden' => 1, 'tipo_video' => 'enlace', 'url_video' => 'https://example.com/pagina-con-video'])
             ->call('create')
             ->assertHasFormErrors(['url_video']);
 
         foreach (['https://youtu.be/dQw4w9WgXcQ', 'https://vimeo.com/123456789', 'https://cdn.example.com/clase.mp4'] as $i => $enlace) {
             Livewire::test(CreateLeccion::class)
-                ->fillForm(['modulo_id' => $this->modulo->id, 'titulo' => "Enlace válido {$i}", 'orden' => 1, 'url_video' => $enlace])
+                ->fillForm(['modulo_id' => $this->modulo->id, 'titulo' => "Enlace válido {$i}", 'orden' => 1, 'tipo_video' => 'enlace', 'url_video' => $enlace])
                 ->call('create')
                 ->assertHasNoFormErrors();
         }
@@ -180,6 +215,7 @@ class LeccionVideoTest extends TestCase
                 'modulo_id' => $this->modulo->id,
                 'titulo' => 'Bienvenida',
                 'orden' => 1,
+                'tipo_video' => 'archivo',
                 'archivo_video' => $archivo,
             ])
             ->call('create')
