@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Quizzes;
 use App\Filament\Resources\Quizzes\Pages\CreateQuiz;
 use App\Filament\Resources\Quizzes\Pages\EditQuiz;
 use App\Filament\Resources\Quizzes\Pages\ListQuizzes;
+use App\Filament\Resources\Quizzes\RelationManagers\PreguntasRelationManager;
 use App\Filament\Resources\Quizzes\Schemas\QuizForm;
 use App\Filament\Resources\Quizzes\Tables\QuizzesTable;
 use App\Models\Quiz;
@@ -46,7 +47,7 @@ class QuizResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PreguntasRelationManager::class,
         ];
     }
 
