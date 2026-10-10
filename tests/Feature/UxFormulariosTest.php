@@ -39,7 +39,7 @@ class UxFormulariosTest extends TestCase
             ->fillForm(['nombre' => 'Seguridad', 'slug' => 'seguridad', 'orden' => 1])
             ->call('create')
             ->assertHasNoFormErrors()
-            ->assertRedirect(AreaResource::getUrl('index'));
+            ->assertRedirect(AreaResource::getUrl('edit', ['record' => Area::where('slug', 'seguridad')->firstOrFail()]));
 
         Livewire::test(CreateModulo::class)
             ->fillForm(['area_id' => $area->id, 'titulo' => 'Introducción', 'orden' => 1])

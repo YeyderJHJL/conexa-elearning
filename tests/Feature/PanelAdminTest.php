@@ -53,8 +53,8 @@ class PanelAdminTest extends TestCase
         }
 
         $this->assertSame([
-            'Contenido' => ['Áreas', 'Módulos', 'Lecciones'],
-            'Evaluación' => ['Quizzes', 'Preguntas', 'Opciones'],
+            'Contenido' => ['Áreas', 'Módulos'],
+            'Evaluación' => ['Quizzes'],
             'Personas' => ['Usuarios'],
             'Reportes' => ['Reporte de avance', 'Encuestas de feedback'],
         ], $grupos);
@@ -78,7 +78,7 @@ class PanelAdminTest extends TestCase
 
         $items = $xpath->query('//li[contains(@class, "fi-sidebar-item")]');
 
-        $this->assertGreaterThanOrEqual(10, $items->length, 'Inicio + 9 recursos y páginas.');
+        $this->assertGreaterThanOrEqual(7, $items->length, 'Inicio + 6 recursos y páginas.');
 
         foreach ($items as $item) {
             $this->assertGreaterThan(
