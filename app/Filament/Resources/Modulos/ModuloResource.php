@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Modulos;
 use App\Filament\Resources\Modulos\Pages\CreateModulo;
 use App\Filament\Resources\Modulos\Pages\EditModulo;
 use App\Filament\Resources\Modulos\Pages\ListModulos;
+use App\Filament\Resources\Modulos\RelationManagers\LeccionesRelationManager;
 use App\Filament\Resources\Modulos\Schemas\ModuloForm;
 use App\Filament\Resources\Modulos\Tables\ModulosTable;
 use App\Models\Modulo;
@@ -46,7 +47,7 @@ class ModuloResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            LeccionesRelationManager::class,
         ];
     }
 
