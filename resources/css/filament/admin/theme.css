@@ -300,3 +300,109 @@ html:not(.dark) .fi-input-wrp:focus-within {
     border-left: 4px solid var(--conexa-dorado);
     box-shadow: 0 12px 32px -12px rgb(14 26 52 / 0.35);
 }
+
+/* ------------------------------------------- Formularios: color y contraste */
+
+/*
+ * Objetivo: que cada campo se identifique de un vistazo, en claro y en oscuro.
+ * - Secciones con acento dorado a la izquierda y cabecera con tinte.
+ * - Etiquetas en color de marca; campos con borde visible y fondo propio.
+ * - Foco dorado (oscuro) o azul complementario (claro).
+ */
+
+.fi-section {
+    border-left: 4px solid var(--conexa-dorado);
+}
+
+.fi-section-header {
+    background-color: rgb(14 26 52 / 0.04);
+    border-bottom: 1px solid rgb(14 26 52 / 0.08);
+}
+
+.dark .fi-section-header {
+    background-color: rgb(215 167 67 / 0.10);
+    border-bottom-color: rgb(215 167 67 / 0.22);
+}
+
+/* Etiquetas: azul de marca en claro, dorado claro en oscuro. */
+.dark .fi-fo-field-label-content {
+    color: #E8C16A;
+}
+
+.fi-fo-field-label-content {
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+}
+
+/* Campos: borde visible y fondo propio, distintos de la tarjeta que los contiene. */
+html:not(.dark) .fi-input-wrp {
+    --tw-ring-color: rgb(14 26 52 / 0.32);
+    background-color: #ffffff;
+}
+
+.dark .fi-input-wrp {
+    --tw-ring-color: rgb(255 255 255 / 0.30);
+    background-color: rgb(255 255 255 / 0.07);
+}
+
+.dark .fi-input-wrp:focus-within {
+    --tw-ring-color: var(--conexa-dorado);
+    box-shadow: 0 0 0 2px var(--conexa-dorado);
+}
+
+.fi-input-wrp .fi-input::placeholder {
+    opacity: 0.55;
+}
+
+/* Subida de archivos: zona punteada de color. */
+.fi-fo-file-upload .filepond--panel-root {
+    border: 2px dashed rgb(74 111 165 / 0.55);
+    background-color: rgb(74 111 165 / 0.06);
+}
+
+.dark .fi-fo-file-upload .filepond--panel-root {
+    border-color: rgb(215 167 67 / 0.55);
+    background-color: rgb(215 167 67 / 0.06);
+}
+
+/* Editor de texto: marco visible. */
+.fi-fo-rich-editor {
+    --tw-ring-color: rgb(14 26 52 / 0.32);
+}
+
+.dark .fi-fo-rich-editor {
+    --tw-ring-color: rgb(255 255 255 / 0.30);
+}
+
+/* Pestañas (datos / lecciones / preguntas): la activa se distingue claramente. */
+.fi-tabs-item.fi-active {
+    background-color: var(--conexa-azul);
+}
+
+.fi-tabs-item.fi-active .fi-tabs-item-label,
+.fi-tabs-item.fi-active .fi-icon {
+    color: #ffffff;
+}
+
+.dark .fi-tabs-item.fi-active {
+    background-color: rgb(215 167 67 / 0.20);
+}
+
+.dark .fi-tabs-item.fi-active .fi-tabs-item-label,
+.dark .fi-tabs-item.fi-active .fi-icon {
+    color: var(--conexa-dorado);
+}
+
+/* Ventanas (modales): borde superior dorado y cabecera con tinte, igual que las secciones. */
+.fi-modal-window {
+    border-top: 3px solid var(--conexa-dorado);
+}
+
+.fi-modal-header {
+    background-color: rgb(14 26 52 / 0.04);
+    padding-block: 1.1rem;
+}
+
+.dark .fi-modal-header {
+    background-color: rgb(215 167 67 / 0.10);
+}
