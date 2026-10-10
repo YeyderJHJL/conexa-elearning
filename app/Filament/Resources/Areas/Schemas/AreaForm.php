@@ -21,6 +21,7 @@ class AreaForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Información del área')
                     ->description('El nombre y la descripción que verán los colaboradores.')
@@ -79,6 +80,7 @@ class AreaForm
                             ->disk('public')
                             ->visibility('public')
                             ->directory('areas')
+                            ->imagePreviewHeight('160')
                             ->helperText('Opcional. Se muestra como portada de la tarjeta del área.')
                             ->columnSpanFull(),
                     ]),
