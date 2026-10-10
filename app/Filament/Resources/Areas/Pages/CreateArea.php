@@ -3,17 +3,14 @@
 namespace App\Filament\Resources\Areas\Pages;
 
 use App\Filament\Resources\Areas\AreaResource;
+use App\Filament\Support\CreaYAbreEdicion;
+use App\Filament\Support\FormularioCentrado;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateArea extends CreateRecord
 {
-    protected static string $resource = AreaResource::class;
+    use CreaYAbreEdicion;
+    use FormularioCentrado;
 
-    /**
-     * Tras crear el área se abre su edición, donde se agregan los módulos.
-     */
-    protected function getRedirectUrl(): string
-    {
-        return static::getResource()::getUrl('edit', ['record' => $this->getRecord()]);
-    }
+    protected static string $resource = AreaResource::class;
 }

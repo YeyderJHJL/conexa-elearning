@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -43,6 +44,7 @@ class ModulosRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 TextInput::make('titulo')
                     ->label('Título')
@@ -97,7 +99,7 @@ class ModulosRelationManager extends RelationManager
                     ->icon(Heroicon::OutlinedPlus)
                     ->modalHeading('Nuevo módulo')
                     ->modalDescription('Solo lo básico. Después podrás agregarle lecciones y un quiz.')
-                    ->modalWidth('lg')
+                    ->modalWidth(Width::Large)
                     ->mutateDataUsing(function (array $data): array {
                         $data['orden'] = ((int) $this->getOwnerRecord()->modulos()->max('orden')) + 1;
 
@@ -111,7 +113,7 @@ class ModulosRelationManager extends RelationManager
                     ->url(fn (Modulo $record): string => ModuloResource::getUrl('edit', ['record' => $record])),
                 EditAction::make()
                     ->modalHeading('Editar módulo')
-                    ->modalWidth('lg'),
+                    ->modalWidth(Width::Large),
                 DeleteAction::make(),
             ]);
     }
