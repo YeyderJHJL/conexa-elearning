@@ -10,6 +10,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Enums\Width;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -39,6 +40,11 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('2.5rem')
             ->favicon(fn () => asset('favicon.png'))
             ->theme(asset('build-admin/theme.css'))
+            // Después de crear o editar, el admin vuelve al listado del recurso.
+            ->resourceCreatePageRedirect('index')
+            ->resourceEditPageRedirect('index')
+            ->maxContentWidth(Width::SevenExtraLarge)
+            ->unsavedChangesAlerts()
             ->navigationGroups([
                 NavigationGroup::make('Contenido')->collapsible()->collapsed(),
                 NavigationGroup::make('Evaluación')->collapsible()->collapsed(),

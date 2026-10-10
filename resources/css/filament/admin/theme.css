@@ -215,3 +215,88 @@ html:not(.dark) .fi-ta-row:hover {
 .fi-simple-main {
     border-top: 4px solid var(--conexa-dorado);
 }
+
+/* -------------------------------------------------------------- Formularios */
+
+/* Secciones: tarjetas con esquinas amplias, sombra suave y el ícono en dorado. */
+.fi-section {
+    border-radius: 1rem;
+    border: 1px solid rgb(14 26 52 / 0.08);
+    box-shadow: 0 1px 2px rgb(14 26 52 / 0.04), 0 10px 28px -14px rgb(14 26 52 / 0.16);
+}
+
+.fi-section-header-heading {
+    color: var(--conexa-azul);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.dark .fi-section-header-heading {
+    color: #fff;
+}
+
+.fi-section-header-description {
+    color: var(--conexa-gris-texto);
+}
+
+.fi-section-header > .fi-icon {
+    color: var(--conexa-dorado);
+}
+
+.fi-section-content-ctn {
+    border-color: rgb(14 26 52 / 0.06);
+}
+
+/* Etiquetas y campos */
+.fi-fo-field-label-content {
+    color: var(--conexa-azul);
+    font-weight: 600;
+}
+
+.dark .fi-fo-field-label-content {
+    color: #e5e7eb;
+}
+
+.fi-fo-field-label-required-mark {
+    color: #dc2626;
+}
+
+.fi-input-wrp {
+    border-radius: 0.75rem;
+    transition: box-shadow 150ms ease, border-color 150ms ease;
+}
+
+html:not(.dark) .fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 2px var(--conexa-complementario);
+}
+
+/* Errores de validación: borde rojo y mensaje legible, no solo el rojo por defecto. */
+.fi-input-wrp:has([aria-invalid='true']),
+.fi-input-wrp.fi-invalid {
+    box-shadow: 0 0 0 2px #f87171;
+}
+
+.fi-fo-field-wrp-error-message {
+    color: #b91c1c;
+    font-weight: 500;
+}
+
+.dark .fi-fo-field-wrp-error-message {
+    color: #fca5a5;
+}
+
+/* Botones, ventanas y notificaciones */
+.fi-btn {
+    border-radius: 0.7rem;
+    font-weight: 600;
+}
+
+.fi-modal-window {
+    border-radius: 1rem;
+}
+
+.fi-no-notification {
+    border-radius: 1rem;
+    border-left: 4px solid var(--conexa-dorado);
+    box-shadow: 0 12px 32px -12px rgb(14 26 52 / 0.35);
+}

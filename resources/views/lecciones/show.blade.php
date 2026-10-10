@@ -41,7 +41,7 @@
                 </div>
             @endif
 
-            @if ($leccion->url_video)
+            @if (blank($leccion->archivo_video) && $leccion->url_video)
                 @if ($leccion->video_embed_url)
                     <div class="aspect-video overflow-hidden rounded-2xl bg-marca-azul shadow-tarjeta-hover ring-1 ring-marca-azul/10">
                         <iframe
