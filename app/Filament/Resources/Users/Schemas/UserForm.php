@@ -7,7 +7,9 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class UserForm
 {
@@ -15,42 +17,73 @@ class UserForm
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->label('Nombre')
-                    ->required(),
+                Section::make('Datos personales')
+                    ->description('Quién es y cuál es su puesto.')
+                    ->icon(Heroicon::OutlinedUserCircle)
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Nombre')
+                            ->required()
+                            ->maxLength(255),
 
-                TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->unique(ignoreRecord: true),
+                        TextInput::make('email')
+                            ->label('Correo electrónico')
+                            ->email()
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true),
 
-                Select::make('rol')
-                    ->options(User::ETIQUETAS_ROL)
-                    ->default('trabajador')
-                    ->required(),
+                        TextInput::make('cargo')
+                            ->label('Cargo')
+                            ->prefixIcon(Heroicon::OutlinedBriefcase)
+                            ->maxLength(255),
 
-                TextInput::make('cargo'),
+                        DatePicker::make('fecha_ingreso')
+                            ->label('Fecha de ingreso'),
+                    ]),
 
-                DatePicker::make('fecha_ingreso'),
+                Section::make('Acceso a la plataforma')
+                    ->description('Rol, contraseña y estado de la cuenta.')
+                    ->icon(Heroicon::OutlinedLockClosed)
+                    ->columns(2)
+                    ->schema([
+                        Select::make('rol')
+                            ->label('Rol')
+                            ->options(User::ETIQUETAS_ROL)
+                            ->default('trabajador')
+                            ->required(),
 
-                Select::make('areas')
-                    ->relationship('areas', 'nombre')
-                    ->multiple()
-                    ->preload()
-                    ->label('Áreas asignadas'),
+                        TextInput::make('password')
+                            ->label('Contraseña')
+                            ->password()
+                            ->revealable()
+                            ->required(fn (string $operation) => $operation === 'create')
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->dehydrateStateUsing(fn ($state) => bcrypt($state))
+                            ->helperText(fn (string $operation): ?string => $operation === 'edit' ? 'Déjala vacía para conservar la actual.' : null),
 
-                TextInput::make('password')
-                    ->password()
-                    ->required(fn (string $operation) => $operation === 'create')
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->dehydrateStateUsing(fn ($state) => bcrypt($state)),
+                        Toggle::make('activo')
+                            ->label('Cuenta activa')
+                            ->default(true)
+                            ->inline(false),
 
-                Toggle::make('activo')
-                    ->default(true),
+                        Toggle::make('debe_cambiar_password')
+                            ->label('Debe cambiar la contraseña al ingresar')
+                            ->default(true)
+                            ->inline(false),
+                    ]),
 
-                Toggle::make('debe_cambiar_password')
-                    ->label('Debe cambiar contraseña al ingresar')
-                    ->default(true),
+                Section::make('Áreas asignadas')
+                    ->description('Las áreas de capacitación que verá este colaborador.')
+                    ->icon(Heroicon::OutlinedAcademicCap)
+                    ->schema([
+                        Select::make('areas')
+                            ->label('Áreas')
+                            ->relationship('areas', 'nombre')
+                            ->multiple()
+                            ->preload(),
+                    ]),
             ]);
     }
 }
