@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Preguntas\Schemas;
 
+use App\Filament\Resources\Quizzes\Schemas\PreguntasRepeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -16,9 +17,9 @@ class PreguntaForm
         return $schema
             ->components([
                 Section::make('Pregunta')
-                    ->description('Después de crearla, agrega sus opciones y marca cuál es la correcta.')
+                    ->description('A qué quiz pertenece y qué se le pregunta al colaborador.')
                     ->icon(Heroicon::OutlinedQuestionMarkCircle)
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
                         Select::make('quiz_id')
                             ->label('Quiz')
@@ -26,18 +27,26 @@ class PreguntaForm
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpanFull(),
-                        Textarea::make('enunciado')
-                            ->label('Enunciado')
-                            ->required()
-                            ->rows(3)
-                            ->columnSpanFull(),
+                            ->columnSpan(2),
                         TextInput::make('orden')
                             ->label('Orden')
                             ->required()
                             ->numeric()
                             ->default(0)
                             ->helperText('El número menor aparece primero.'),
+                        Textarea::make('enunciado')
+                            ->label('Enunciado')
+                            ->required()
+                            ->rows(3)
+                            ->maxLength(1000)
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Opciones de respuesta')
+                    ->description('Agrega las opciones aquí mismo y marca cuál es la correcta.')
+                    ->icon(Heroicon::OutlinedListBullet)
+                    ->schema([
+                        PreguntasRepeater::opciones()->hiddenLabel(),
                     ]),
             ]);
     }

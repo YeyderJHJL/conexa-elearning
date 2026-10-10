@@ -77,6 +77,22 @@ class PreguntasRepeater
      */
     public static function campos(bool $conRelacion): array
     {
+        return [
+            Textarea::make('enunciado')
+                ->label('Pregunta')
+                ->required()
+                ->rows(2)
+                ->maxLength(1000)
+                ->placeholder('Ej. ¿Cuál es el primer paso ante un incendio?'),
+            self::opciones($conRelacion),
+        ];
+    }
+
+    /**
+     * Tabla de opciones de respuesta con su interruptor de "correcta".
+     */
+    public static function opciones(bool $conRelacion = true): Repeater
+    {
         $opciones = Repeater::make('opciones')
             ->label('Opciones de respuesta')
             ->table([
@@ -122,15 +138,7 @@ class PreguntasRepeater
             $opciones->relationship('opciones');
         }
 
-        return [
-            Textarea::make('enunciado')
-                ->label('Pregunta')
-                ->required()
-                ->rows(2)
-                ->maxLength(1000)
-                ->placeholder('Ej. ¿Cuál es el primer paso ante un incendio?'),
-            $opciones,
-        ];
+        return $opciones;
     }
 
     /**

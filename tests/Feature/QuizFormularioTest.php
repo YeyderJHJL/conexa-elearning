@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Preguntas\Pages\CreatePregunta;
+use App\Filament\Resources\Preguntas\Pages\EditPregunta;
 use App\Filament\Resources\Quizzes\Pages\CreateQuiz;
 use App\Filament\Resources\Quizzes\Pages\EditQuiz;
 use App\Models\Area;
@@ -156,5 +158,57 @@ class QuizFormularioTest extends TestCase
         $this->assertSame(1, Pregunta::count());
         $this->assertTrue($correcta->fresh()->es_correcta);
         $this->assertSame(2, Opcion::count());
+    }
+
+    public function test_a_question_is_created_with_its_options_from_its_own_form(): void
+    {
+        $quiz = Quiz::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Quiz']);
+
+        Livewire::test(CreatePregunta::class)
+            ->fillForm([
+                'quiz_id' => $quiz->id,
+                'orden' => 1,
+                ...$this->pregunta('¿Suelta?', 1),
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $pregunta = Pregunta::firstOrFail();
+
+        $this->assertSame(2, $pregunta->opciones()->count());
+        $this->assertSame(['Opción B'], $pregunta->opciones()->where('es_correcta', true)->pluck('texto')->all());
+    }
+
+    public function test_a_standalone_question_needs_a_correct_option(): void
+    {
+        $quiz = Quiz::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Quiz']);
+
+        Livewire::test(CreatePregunta::class)
+            ->fillForm([
+                'quiz_id' => $quiz->id,
+                'orden' => 1,
+                'enunciado' => '¿Sin correcta?',
+                'opciones' => [['texto' => 'A', 'es_correcta' => false], ['texto' => 'B', 'es_correcta' => false]],
+            ])
+            ->call('create')
+            ->assertHasFormErrors();
+
+        $this->assertSame(0, Pregunta::count());
+    }
+
+    public function test_options_can_be_added_when_editing_a_standalone_question(): void
+    {
+        $quiz = Quiz::create(['modulo_id' => $this->modulo->id, 'titulo' => 'Quiz']);
+        $pregunta = Pregunta::create(['quiz_id' => $quiz->id, 'enunciado' => 'Original', 'orden' => 1]);
+        $existente = Opcion::create(['pregunta_id' => $pregunta->id, 'texto' => 'A', 'es_correcta' => true]);
+
+        $componente = Livewire::test(EditPregunta::class, ['record' => $pregunta->getKey()]);
+        $opciones = $componente->get('data.opciones');
+        $opciones['nueva'] = ['texto' => 'B', 'es_correcta' => false];
+
+        $componente->set('data.opciones', $opciones)->call('save')->assertHasNoFormErrors();
+
+        $this->assertSame(2, $pregunta->opciones()->count());
+        $this->assertTrue($existente->fresh()->es_correcta);
     }
 }
