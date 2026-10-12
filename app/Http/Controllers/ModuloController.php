@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Modulo;
 use App\Services\ProgresoService;
 use App\Services\QuizService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -13,7 +14,7 @@ class ModuloController extends Controller
     /**
      * Detalle de un módulo: sus lecciones activas, cuáles completó el usuario y el estado de su quiz.
      */
-    public function show(Request $request, Modulo $modulo, QuizService $quizzes, ProgresoService $progreso): View
+    public function show(Request $request, Modulo $modulo, QuizService $quizzes, ProgresoService $progreso): View|RedirectResponse
     {
         $modulo->load('area');
 
@@ -25,6 +26,12 @@ class ModuloController extends Controller
         );
 
         $this->exigirModuloDesbloqueado($request, $modulo);
+
+        if ($this->enRuta($request)) {
+            $request->session()->reflash();
+
+            return redirect()->to($this->urlDelModulo($request, $modulo));
+        }
 
         $lecciones = $modulo->lecciones()->where('activa', true)->get();
 

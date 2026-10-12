@@ -28,11 +28,13 @@ class LeccionController extends Controller
             'anterior' => $anterior,
             'siguiente' => $siguiente,
             'completada' => $request->user()->lecciones()->whereKey($leccion->id)->exists(),
+            'volverUrl' => $this->urlDelModulo($request, $leccion->modulo),
+            'enRuta' => $this->enRuta($request),
         ]);
     }
 
     /**
-     * Registra la lección como completada y avanza a la siguiente (o al módulo si era la última).
+     * Registra la lección como completada y avanza a la siguiente (o al módulo, o a la ruta, si era la última).
      */
     public function completar(Request $request, Leccion $leccion, ProgresoService $progreso): RedirectResponse
     {
@@ -46,7 +48,7 @@ class LeccionController extends Controller
 
         $redireccion = $siguiente
             ? redirect()->route('lecciones.show', $siguiente)
-            : redirect()->route('modulos.show', $leccion->modulo_id);
+            : redirect()->to($this->urlDelModulo($request, $leccion->modulo));
 
         // Solo detalle visual: celebra una vez, cuando esta lección es la que completa el módulo.
         if (! $moduloCompletadoAntes && $progreso->moduloCompletado($request->user(), $leccion->modulo)) {

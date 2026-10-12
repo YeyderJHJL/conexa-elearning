@@ -32,6 +32,8 @@ class QuizController extends Controller
             'modulo' => $modulo,
             'quiz' => $quiz,
             'notaMinima' => $this->quizzes->notaMinima($quiz),
+            'volverUrl' => $this->urlDelModulo($request, $modulo),
+            'enRuta' => $this->enRuta($request),
         ]);
     }
 
@@ -90,6 +92,8 @@ class QuizController extends Controller
             'intento' => $intento,
             'notaMinima' => $this->quizzes->notaMinima($intento->quiz),
             'detalle' => $this->quizzes->detalle($intento),
+            'volverUrl' => $this->urlDelModulo($request, $modulo),
+            'enRuta' => $this->enRuta($request),
         ]);
     }
 
@@ -109,18 +113,18 @@ class QuizController extends Controller
         $quiz = $modulo->quiz;
 
         if (! $quiz || ! $quiz->preguntas()->exists()) {
-            $this->volverAlModulo($modulo, 'Este módulo aún no tiene un quiz disponible.');
+            $this->volverAlModulo($request, $modulo, 'Este módulo aún no tiene un quiz disponible.');
         }
 
         if (! $request->user()->esAdmin() && ! $this->progreso->leccionesCompletadas($request->user(), $modulo)) {
-            $this->volverAlModulo($modulo, 'Completa todas las lecciones del módulo antes de rendir el quiz.');
+            $this->volverAlModulo($request, $modulo, 'Completa todas las lecciones del módulo antes de rendir el quiz.');
         }
 
         return $quiz;
     }
 
-    private function volverAlModulo(Modulo $modulo, string $aviso): never
+    private function volverAlModulo(Request $request, Modulo $modulo, string $aviso): never
     {
-        throw new HttpResponseException(redirect()->route('modulos.show', $modulo)->with('aviso', $aviso));
+        throw new HttpResponseException(redirect()->to($this->urlDelModulo($request, $modulo))->with('aviso', $aviso));
     }
 }
