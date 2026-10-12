@@ -14,7 +14,7 @@
 <div
     data-ruta
     x-data
-    x-init="$nextTick(() => $el.querySelector('[data-estado=actual]')?.scrollIntoView({ block: 'center' }))"
+    x-init="$nextTick(() => { const ancla = location.hash ? document.querySelector(location.hash) : null; (ancla ?? $el.querySelector('[data-estado=actual]'))?.scrollIntoView({ block: ancla ? 'start' : 'center' }) })"
     class="mt-4"
 >
     @php
@@ -51,13 +51,19 @@
             });
         @endphp
 
-        <section class="mt-10" data-tramo="{{ $estadoModulo }}" aria-label="Módulo {{ $tramo['modulo']->titulo }}">
-            {{-- Cartel del módulo: portada con degradado azul para que el texto siempre se lea. --}}
+        <section id="modulo-{{ $tramo['modulo']->id }}" class="mt-10 scroll-mt-20" data-tramo="{{ $estadoModulo }}" aria-label="Módulo {{ $tramo['modulo']->titulo }}">
+            {{-- Cartel del módulo: su imagen a la vista; el degradado azul cubre solo el lado del texto. --}}
+            @php $conImagen = filled($tramo['modulo']->imagen_url); @endphp
             <header class="tarjeta relative overflow-hidden text-white">
-                <x-portada :imagen="$tramo['modulo']->imagen_url" :color="$area->color_acento" :icono="$area->icono" class="absolute inset-0 h-full w-full" />
-                <div class="absolute inset-0 bg-gradient-to-r from-marca-azul via-marca-azul/90 to-marca-azul/55"></div>
+                {{-- La portada va dentro de un contenedor absoluto: x-portada ya trae "relative" y, sin él, quedaba fuera del cartel. --}}
+                <div class="absolute inset-0">
+                    <x-portada :imagen="$tramo['modulo']->imagen_url" :color="$area->color_acento" :icono="$area->icono" class="h-full w-full" />
+                </div>
+                {{-- Velo uniforme + degradado más denso del lado del texto: se lee igual con cualquier color de imagen. --}}
+                <div class="absolute inset-0 {{ $conImagen ? 'bg-marca-azul/35' : '' }}"></div>
+                <div class="absolute inset-0 {{ $conImagen ? 'bg-gradient-to-r from-marca-azul/90 via-marca-azul/60 to-marca-azul/10' : 'bg-gradient-to-r from-marca-azul via-marca-azul/90 to-marca-azul/55' }}"></div>
 
-                <div class="relative flex items-center justify-between gap-3 px-5 py-4 sm:px-6 sm:py-5">
+                <div class="relative flex items-center justify-between gap-3 px-5 py-4 sm:px-6 sm:py-5 {{ $conImagen ? 'min-h-[9rem] sm:min-h-[10.5rem]' : '' }} [text-shadow:0_1px_3px_rgb(0_0_0/0.55)]">
                     <div class="min-w-0">
                         <p class="text-xs font-semibold uppercase tracking-wide text-marca-gris-claro">Módulo {{ $loop->iteration }}</p>
                         <h3 class="break-words text-lg font-semibold leading-snug sm:text-xl">{{ $tramo['modulo']->titulo }}</h3>
@@ -112,7 +118,7 @@
                 </svg>
 
                 @foreach ($nodos as $i => $nodo)
-                    <x-ruta-nodo :nodo="$nodo" :x="$puntos[$i]['x']" :y="$puntos[$i]['y']" />
+                    <x-ruta-nodo :nodo="$nodo" :x="$puntos[$i]['x']" :y="$puntos[$i]['y']" :imagen="$tramo['modulo']->imagen_url" :indice="$i" />
                 @endforeach
             </div>
         </section>

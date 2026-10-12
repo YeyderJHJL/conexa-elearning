@@ -504,4 +504,47 @@ class RutaAreaTest extends TestCase
             ->assertDontSee('storage/modulos/', false)
             ->assertSee('data-nodo="leccion"', false);
     }
+
+    public function test_the_content_menu_lists_modules_and_lessons_and_locks_what_is_blocked(): void
+    {
+        [, , , $lecciones] = $this->escenario();
+
+        foreach (['lista', 'ruta'] as $vista) {
+            $html = $this->actingAs($this->trabajador)
+                ->get(route('areas.show', ['area' => $this->area, 'vista' => $vista]))
+                ->assertOk()
+                ->assertSee('data-menu-contenido', false)
+                ->getContent();
+
+            $this->assertStringContainsString('href="'.route('lecciones.show', $lecciones[1]).'"', $html);
+            $this->assertStringNotContainsString('href="'.route('lecciones.show', $lecciones[3]).'"', $html, 'La lección del módulo bloqueado no es enlace.');
+        }
+    }
+
+    public function test_the_content_menu_is_also_in_lessons_but_not_in_the_dashboard(): void
+    {
+        [, , , $lecciones] = $this->escenario();
+
+        $this->actingAs($this->trabajador)
+            ->get(route('lecciones.show', $lecciones[0]))
+            ->assertOk()
+            ->assertSee('data-menu-contenido', false)
+            ->assertSee('aria-current="page"', false);
+
+        $this->actingAs($this->trabajador)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertDontSee('data-menu-contenido', false);
+    }
+
+    public function test_the_banner_image_sits_in_an_absolute_wrapper_behind_the_text(): void
+    {
+        $modulo = $this->modulo('Bienvenida', ['imagen' => 'modulos/portada.jpg']);
+        $this->leccion($modulo, 'Primera', 1);
+
+        $this->actingAs($this->trabajador)
+            ->get(route('areas.show', ['area' => $this->area, 'vista' => 'ruta']))
+            ->assertOk()
+            ->assertSee('<div class="absolute inset-0">', false);
+    }
 }

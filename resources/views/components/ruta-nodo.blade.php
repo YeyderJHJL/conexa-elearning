@@ -1,4 +1,4 @@
-@props(['nodo', 'x', 'y'])
+@props(['nodo', 'x', 'y', 'imagen' => null, 'indice' => 0])
 
 {{--
     Nodo de la ruta de un área. $x es el centro horizontal en % del carril y $y el centro vertical en px.
@@ -32,6 +32,17 @@
     };
 
     $descripcion = "{$nodo['etiqueta']}: {$nodo['titulo']} ({$estado})";
+
+    // Las lecciones muestran la imagen del módulo recortada en el círculo (un encuadre distinto por nodo).
+    $conImagen = filled($imagen) && $tipo === 'leccion';
+    $encuadres = ['20% 25%', '80% 30%', '50% 80%', '25% 70%', '75% 75%'];
+    $encuadre = $encuadres[$indice % count($encuadres)];
+    $velo = match ($estado) {
+        'completado' => 'bg-marca-dorado/60',
+        'actual' => 'bg-marca-azul/45',
+        'disponible' => 'bg-marca-azul/30',
+        default => 'bg-marca-gris-claro/75',
+    };
 @endphp
 
 <div
@@ -46,7 +57,16 @@
         @else
             <span role="img" aria-label="{{ $descripcion }}" class="relative flex {{ $tamano }} cursor-not-allowed items-center justify-center rounded-full {{ $circulo }}">
         @endif
-                <i class="bi {{ $icono }}" aria-hidden="true"></i>
+                @if ($conImagen)
+                    <span class="absolute inset-0 overflow-hidden rounded-full" aria-hidden="true">
+                        <img src="{{ $imagen }}" alt="" loading="lazy" onerror="this.remove()"
+                             class="h-full w-full scale-[1.9] object-cover {{ $estado === 'bloqueado' ? 'grayscale' : '' }}"
+                             style="object-position: {{ $encuadre }}">
+                        <span class="absolute inset-0 {{ $velo }}"></span>
+                    </span>
+                @endif
+
+                <i class="bi {{ $icono }} {{ $conImagen ? 'relative drop-shadow-md '.($estado === 'bloqueado' ? 'text-marca-profundo' : 'text-white') : '' }}" aria-hidden="true"></i>
 
                 @if ($esQuiz && $estado === 'completado')
                     <span class="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-marca-azul text-xs text-marca-dorado ring-2 ring-white">

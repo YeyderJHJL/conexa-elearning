@@ -10,6 +10,9 @@
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-[4.5rem] items-center justify-between">
             <div class="flex items-center">
+                <!-- Menú de contenido del área (solo en páginas de un área, módulo, lección o quiz) -->
+                <x-menu-contenido />
+
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-marca-dorado">
