@@ -410,4 +410,98 @@ class RutaAreaTest extends TestCase
             ->get(route('areas.show', ['area' => $ajena, 'vista' => 'ruta']))
             ->assertForbidden();
     }
+
+    private function enModoRuta(): static
+    {
+        return $this->actingAs($this->trabajador)->withSession(['vista_area' => 'ruta']);
+    }
+
+    public function test_the_module_page_sends_route_mode_users_back_to_the_route(): void
+    {
+        $modulo = $this->modulo('Bienvenida');
+        $this->leccion($modulo, 'Primera', 1);
+
+        $this->enModoRuta()
+            ->get(route('modulos.show', $modulo))
+            ->assertRedirect(route('areas.show', $this->area).'#modulo-'.$modulo->id);
+
+        $this->actingAs($this->trabajador)
+            ->withSession(['vista_area' => 'lista'])
+            ->get(route('modulos.show', $modulo))
+            ->assertOk();
+    }
+
+    public function test_back_links_go_to_the_route_in_route_mode_and_to_the_module_in_list_mode(): void
+    {
+        $modulo = $this->modulo('Bienvenida');
+        $leccion = $this->leccion($modulo, 'Primera', 1);
+        $destinoRuta = route('areas.show', $this->area).'#modulo-'.$modulo->id;
+
+        $this->enModoRuta()
+            ->get(route('lecciones.show', $leccion))
+            ->assertOk()
+            ->assertSee('href="'.$destinoRuta.'"', false)
+            ->assertSee('Volver a la ruta');
+
+        $this->actingAs($this->trabajador)
+            ->withSession(['vista_area' => 'lista'])
+            ->get(route('lecciones.show', $leccion))
+            ->assertOk()
+            ->assertSee('href="'.route('modulos.show', $modulo).'"', false)
+            ->assertSee('Volver a Bienvenida');
+    }
+
+    public function test_finishing_the_last_lesson_returns_to_the_route_in_route_mode(): void
+    {
+        $modulo = $this->modulo('Bienvenida');
+        $leccion = $this->leccion($modulo, 'Única', 1);
+
+        $this->enModoRuta()
+            ->post(route('lecciones.completar', $leccion))
+            ->assertRedirect(route('areas.show', $this->area).'#modulo-'.$modulo->id);
+
+        $this->assertTrue($this->trabajador->lecciones()->whereKey($leccion->id)->exists());
+    }
+
+    public function test_the_quiz_pages_offer_the_route_as_the_way_back(): void
+    {
+        $modulo = $this->modulo('Bienvenida');
+        $this->leccion($modulo, 'Única', 1, vista: true);
+        $this->quiz($modulo);
+        $destinoRuta = route('areas.show', $this->area).'#modulo-'.$modulo->id;
+
+        $this->enModoRuta()
+            ->get(route('quiz.show', $modulo))
+            ->assertOk()
+            ->assertSee('href="'.$destinoRuta.'"', false)
+            ->assertSee('Volver a la ruta');
+    }
+
+    public function test_the_route_shows_the_module_image_in_the_banner_and_in_lesson_circles(): void
+    {
+        $modulo = $this->modulo('Bienvenida', ['imagen' => 'modulos/portada.jpg']);
+        $this->leccion($modulo, 'Primera', 1);
+        $this->quiz($modulo);
+
+        $html = $this->actingAs($this->trabajador)
+            ->get(route('areas.show', ['area' => $this->area, 'vista' => 'ruta']))
+            ->assertOk()
+            ->assertSee('id="modulo-'.$modulo->id.'"', false)
+            ->getContent();
+
+        // Una vez en el cartel y una en el círculo de la lección; el quiz no lleva imagen.
+        $this->assertSame(2, substr_count($html, 'storage/modulos/portada.jpg'));
+    }
+
+    public function test_the_route_without_module_image_keeps_the_brand_banner(): void
+    {
+        $modulo = $this->modulo('Bienvenida');
+        $this->leccion($modulo, 'Primera', 1);
+
+        $this->actingAs($this->trabajador)
+            ->get(route('areas.show', ['area' => $this->area, 'vista' => 'ruta']))
+            ->assertOk()
+            ->assertDontSee('storage/modulos/', false)
+            ->assertSee('data-nodo="leccion"', false);
+    }
 }

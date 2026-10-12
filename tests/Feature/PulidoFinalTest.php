@@ -332,9 +332,9 @@ class PulidoFinalTest extends TestCase
         $paginas = [
             '/dashboard',
             route('areas.show', $this->area),
-            route('areas.show', ['area' => $this->area, 'vista' => 'ruta']),
             route('modulos.show', $modulo),
             route('lecciones.show', $leccion),
+            route('areas.show', ['area' => $this->area, 'vista' => 'ruta']),
             route('profile.edit'),
         ];
 
