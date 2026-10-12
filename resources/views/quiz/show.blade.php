@@ -5,9 +5,9 @@
 
     <div class="py-6 sm:py-10">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <a href="{{ route('modulos.show', $modulo) }}" class="inline-flex items-center gap-2 rounded text-sm font-semibold text-marca-azul transition hover:-translate-x-0.5 hover:text-marca-complementario motion-reduce:transition-none">
+            <a href="{{ $volverUrl }}" class="inline-flex items-center gap-2 rounded text-sm font-semibold text-marca-azul transition hover:-translate-x-0.5 hover:text-marca-complementario motion-reduce:transition-none">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
-                Volver a {{ $modulo->titulo }}
+                {{ $enRuta ? 'Volver a la ruta' : 'Volver a '.$modulo->titulo }}
             </a>
 
             <header class="aparece relative mt-4 overflow-hidden rounded-3xl bg-marca-azul p-6 text-white shadow-tarjeta-hover sm:p-8">

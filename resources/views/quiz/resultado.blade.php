@@ -72,9 +72,9 @@
                     <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
                     Reintentar
                 </a>
-                <a href="{{ route('modulos.show', $modulo) }}" class="btn flex-1 {{ $aprobado ? 'btn-azul' : 'btn-contorno' }}">
+                <a href="{{ $volverUrl }}" class="btn flex-1 {{ $aprobado ? 'btn-azul' : 'btn-contorno' }}">
                     <i class="bi bi-arrow-left" aria-hidden="true"></i>
-                    Volver al módulo
+                    {{ $enRuta ? 'Volver a la ruta' : 'Volver al módulo' }}
                 </a>
             </div>
         </div>
